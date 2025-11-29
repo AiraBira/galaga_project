@@ -1,2 +1,6 @@
 # galaga_project
-Projet de reproduction du jeu Galaga en binôme — Licence 2 Informatique
+Projet de reproduction du jeu Galaga en binôme
+
+Victoria LOGMO 
+Abir JRIRIA ATIGUI 
+Licence 2 Informatique
