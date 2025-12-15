@@ -1,5 +1,7 @@
 package game.actors;
 
+import java.util.List;
+
 import engine.StdDraw;
 
 /**
@@ -7,13 +9,23 @@ import engine.StdDraw;
  * A ce stade cen'est qu'un point rouge qui se déplace avec les flèches du
  * clavier.
  */
-public class Player extends Entite{
-    
+public class Player extends Entite {
 
-    /**  Créé un joueur.  */
+    boolean espaceWasPressed; // Sert a savoir si la touche espace etait appuyée avant
 
-    public Player(double x, double y, double length, int hp, int atk) {
-        super(x, y, length, hp, atk);
+    /** Créé un joueur. */
+
+    public Player(double x, double y, double length, int hp, int atk, double vitesse) {
+        super(x, y, length, hp, atk, vitesse);
+        espaceWasPressed = false;
+    }
+
+    public boolean wasEspacePressed() {
+        return espaceWasPressed;
+    }
+
+    public void setEspaceWasPressed(boolean espaceWasPressed) {
+        this.espaceWasPressed = espaceWasPressed;
     }
 
     /**
@@ -21,30 +33,35 @@ public class Player extends Entite{
      */
     public void draw() {
         StdDraw.setPenColor(StdDraw.RED);
-        StdDraw.filledCircle(x, y, length / 2);
+        StdDraw.filledCircle(getPosX(), getPosY(), getLength() / 2);
+    }
+
+    public void creeMissile(List<Missiles> missilesDispo) {
+        if (missilesDispo.size() < 3) {
+            Missiles m = new Missiles(getPosX(), getPosY(), 0.15, false);
+            missilesDispo.add(m);
+        }
     }
 
     /**
      * Met à jour la position du joueur en fonction des touches préssé.
      */
-    public void update() {
-        double speed = 0.01; // vitesse de déplacement du joueur
+    public void update(List<Missiles> missilesDispo) {
         // Si la flèche gauche est préssé
-        if (StdDraw.isKeyPressed(37)) { 
-            // mouvementGauche();
-            x -= speed; // ici on pourra faire des méthodes venant d'une interface MOUVEMENTS dans laquelle on aura egalement les collisions pris en compte 
-        }
-        // Si la flèche haut est préssé
-        if (StdDraw.isKeyPressed(38)) {
-            //y += speed;
+        if (StdDraw.isKeyPressed(37)) {
+            mouvementGauche();
         }
         // Si la flèche droite est préssé
         if (StdDraw.isKeyPressed(39)) {
-            x += speed;
+            mouvementDroit();
         }
-        // Si la flèche bas est préssé
-        if (StdDraw.isKeyPressed(40)) {
-            //y -= speed;
+
+        if (StdDraw.isKeyPressed(32) && !wasEspacePressed()) {
+            creeMissile(missilesDispo);
+            setEspaceWasPressed(true);
+        } else {
+            setEspaceWasPressed(false);
         }
     }
+
 }

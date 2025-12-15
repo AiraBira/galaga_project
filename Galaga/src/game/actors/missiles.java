@@ -2,36 +2,32 @@ package game.actors;
 
 import engine.StdDraw;
 
-public class missiles {
-    Player tireur1;
-    Monster tireur2;
-    Pair<Double, Double> pointOrigine;
+public class Missiles extends Mouvements {
 
-    public missiles(Monster tireur2, Pair<Double, Double> pointOrigine) {
-        this.tireur2 = tireur2;
-        this.pointOrigine = pointOrigine;
+    boolean touche;
+
+    public Missiles(double posX, double posY, double vitesse, boolean touche) { // L'argument touche permet de faire
+                                                                                // disparaitre le missile s'il touche
+                                                                                // qqch
+        super(posX, posY, vitesse, 0.005);
+        this.touche = touche;
     }
 
-    public missiles(Player tireur1, Pair<Double, Double> pointOrigine) {
-        this.tireur1 = tireur1;
-        this.pointOrigine = pointOrigine;
+    public boolean isTouche() {
+        return touche;
     }
 
-    public Player getTireur1() {
-        return tireur1;
-    }
-
-    public Monster getTireur2() {
-        return tireur2;
-    }
-
-    public Pair<Double, Double> getPointOrigine() {
-        return pointOrigine;
+    public void setTouche(boolean touche) {
+        this.touche = touche;
     }
 
     public void draw() {
-        StdDraw.setPenColor(StdDraw.BLUE);
-        StdDraw.filledCircle(getPointOrigine().getKey(), getPointOrigine().getValue(), 0.1);
+        StdDraw.setPenColor(StdDraw.GREEN);
+        StdDraw.filledRectangle(getPosX(), getPosY(), getLength(), 0.05);
+    }
+
+    public void update() {
+        mouvementHaut();
     }
 
 }

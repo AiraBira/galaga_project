@@ -2,13 +2,10 @@ package game.actors;
 
 import engine.StdDraw;
 
-public abstract class Entite {
-    
-    protected double x; // postion de l'entité sur l'axe des abscisses
-    protected double y; // position de l'entité sur l'axe des ordonnées
-    protected double length; // largeur de l'entité
+public abstract class Entite extends Mouvements {
     protected int hp; // vie totale
     protected int atk; // points d'attaque de l'entité 7
+    protected double vitesse;
     //si on veut plus tard :  protected int def; // points de défense de l'entité
     
     
@@ -18,36 +15,11 @@ public abstract class Entite {
      * @param length largeur de l'entité
      */
 
-    public Entite(double x, double y, double length, int hp, int atk) { 
-        this.x = x;
-        this.y = y;
+    public Entite(double x, double y, double length, int hp, int atk, double vitesse) { 
+        super(x,y, vitesse, length);
         this.length = length;
         this.hp = hp;
         this.atk = atk;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getLength() {
-        return length;
-    }
-
-    public void setLength(double length) {
-        this.length = length;
     }
 
     public int getHp() {

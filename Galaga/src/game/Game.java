@@ -15,12 +15,15 @@ public class Game {
     //public Player player; // Jouer, seul éléments actuellement dans notre jeu
     public Formation formation1;
     public Player player;
+    public List<Missiles> missilesDispo;
+
     /**
      * Créé un jeu avec tous les éléments qui le composent
      */
     public Game() {
 
-        player = new Player(0.5, 0.25, 0.05, 3, 1);
+        missilesDispo = new ArrayList<>();
+        player = new Player(0.5, 0.25, 0.05, 3, 1, 0.01);
         List<Pair<Double,Double>> tabPos= new ArrayList<>();
         tabPos.add(new Pair<Double,Double>(0.40, 0.80));
         tabPos.add(new Pair<Double,Double>(0.5, 0.80));
@@ -72,6 +75,12 @@ public class Game {
     public void draw() {
         player.draw();
         formation1.draw();
+
+       
+        for (Missiles m : missilesDispo){
+            m.draw();
+        }
+        
         
     }
 
@@ -79,7 +88,13 @@ public class Game {
      * Met a jour les attributs de tous les éléments du jeu
      */
     private void update() {
-        player.update();
+        player.update(missilesDispo);
         formation1.update();
+
+        
+        for (Missiles m : missilesDispo){
+            m.update();
+        }
+        
     }
 }
