@@ -6,13 +6,12 @@ import java.util.List;
 import engine.StdDraw;
 import game.actors.*;
 
-
 /**
  * Classe du jeu principal.
  * Gère la création de l'espace de jeu et la boucle de jeu en temps réel.
  */
 public class Game {
-    //public Player player; // Jouer, seul éléments actuellement dans notre jeu
+    // public Player player; // Jouer, seul éléments actuellement dans notre jeu
     public Formation formation1;
     public Player player;
     public List<Missiles> missilesDispo;
@@ -24,14 +23,14 @@ public class Game {
 
         missilesDispo = new ArrayList<>();
         player = new Player(0.5, 0.25, 0.05, 3, 1, 0.01);
-        List<Pair<Double,Double>> tabPos= new ArrayList<>();
-        tabPos.add(new Pair<Double,Double>(0.40, 0.80));
-        tabPos.add(new Pair<Double,Double>(0.5, 0.80));
-        tabPos.add(new Pair<Double,Double>(0.60, 0.80));
-        tabPos.add(new Pair<Double,Double>(0.45, 0.75));
-        tabPos.add(new Pair<Double,Double>(0.55, 0.75));
-        tabPos.add(new Pair<Double,Double>(0.5, 0.7));
-        
+        List<Pair<Double, Double>> tabPos = new ArrayList<>();
+        tabPos.add(new Pair<Double, Double>(0.40, 0.80));
+        tabPos.add(new Pair<Double, Double>(0.5, 0.80));
+        tabPos.add(new Pair<Double, Double>(0.60, 0.80));
+        tabPos.add(new Pair<Double, Double>(0.45, 0.75));
+        tabPos.add(new Pair<Double, Double>(0.55, 0.75));
+        tabPos.add(new Pair<Double, Double>(0.5, 0.7));
+
         formation1 = new Formation(6, tabPos);
     }
 
@@ -70,31 +69,37 @@ public class Game {
     }
 
     /**
-     * Dessin tous les éléments du jeu
+     * Dessine tous les éléments du jeu
      */
     public void draw() {
         player.draw();
         formation1.draw();
 
-       
-        for (Missiles m : missilesDispo){
+        for (Missiles m : missilesDispo) {
             m.draw();
         }
-        
-        
+
     }
 
-    /**
-     * Met a jour les attributs de tous les éléments du jeu
-     */
+    // supprime des missiles de la liste si ils dépassent le haut de l'écran.
+    public void verificationMissiles(List<Missiles> listMissiles){ 
+        for(int i = 0 ; i < listMissiles.size(); i++) {
+            if (listMissiles.get(i).getPosY() - listMissiles.get(i).getLength() >= 1.0) { // le bas de l'écran est Y=0 et le haut est Y=1 !
+                listMissiles.remove(i);
+            }
+        }
+    }
+
+    /*  Met a jour les attributs de tous les éléments du jeu  */
     private void update() {
         player.update(missilesDispo);
         formation1.update();
 
-        
-        for (Missiles m : missilesDispo){
-            m.update();
+        verificationMissiles(missilesDispo);
+
+        for (Missiles missiles : missilesDispo) {
+            missiles.update();
         }
-        
+
     }
 }

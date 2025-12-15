@@ -1,6 +1,6 @@
 package game.actors;
 
-import engine.StdDraw;
+import java.util.List;
 
 public abstract class Entite extends Mouvements {
     protected int hp; // vie totale
@@ -63,6 +63,8 @@ public abstract class Entite extends Mouvements {
             cible.degats(this.getAtk());
         }
     }
+
+    public abstract void creeMissile(List<Missiles> missilesDispo);
 
     
         

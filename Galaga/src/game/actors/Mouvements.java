@@ -50,9 +50,9 @@ public abstract class Mouvements {
     public void mouvementDroit() {
         setPosX(getPosX() + getVitesse());
 
-        if (getPosX()-(getLength()/2) < 0.0) { // Ne peuvent pas dépasser les limites.
+        if (getPosX()-(getLength()/2) <= 0.0) { // Ne peuvent pas dépasser les limites.
             setPosX(0+(getLength()/2));
-        } else if (getPosX()+(getLength()/2)> 1.0) {
+        } else if (getPosX()+(getLength()/2) >= 1.0) {
             setPosX(1.0-(getLength()/2));
         }
 
@@ -61,9 +61,9 @@ public abstract class Mouvements {
     public void mouvementGauche() {
         setPosX(getPosX() - getVitesse());
 
-        if (getPosX()-(getLength()/2) < 0.0) {
+        if (getPosX()-(getLength()/2) <= 0.0) {
             setPosX(0+(getLength()/2));
-        } else if (getPosX()+(getLength()/2)> 1.0) {
+        } else if (getPosX()+(getLength()/2) >= 1.0) {
             setPosX(1.0-(getLength()/2));
         }
 
@@ -72,9 +72,9 @@ public abstract class Mouvements {
     public void mouvementHaut() {
         setPosY(getPosY() + getVitesse());
 
-        if (getPosY()-(getLength()/2) < 0.0) {
+        if (getPosY()-(getLength()/2) <= 0.0) {
             setPosY(0+(getLength()/2));
-        } else if (getPosY()+(getLength()/2)> 1.0) {
+        } else if (getPosY()+(getLength()/2)>= 1.0) {
             setPosY(1.0-(getLength()/2));
         }
     }
@@ -82,9 +82,9 @@ public abstract class Mouvements {
     public void mouvementBas() {
         setPosY(getPosY() - getVitesse());
 
-        if (getPosY()-(getLength()/2) < 0.0) {
+        if (getPosY()-(getLength()/2) <= 0.0) {
             setPosY(0+(getLength()/2));
-        } else if (getPosY()+(getLength()/2)> 1.0) {
+        } else if (getPosY()+(getLength()/2) >= 1.0) {
             setPosY(1.0-(getLength()/2));
         }
     }

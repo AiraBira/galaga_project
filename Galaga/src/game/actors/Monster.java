@@ -1,14 +1,31 @@
 package game.actors;
 
+import java.util.List;
+
 import engine.StdDraw;
 
 public class Monster extends Entite {
-    
 
-     /**  Créé un joueur.  */
+    boolean directionDroite;
 
-    public Monster(double x, double y, double length, int hp, int atk, double vitesse) {
+    /** Créé un joueur. */
+
+    public Monster(double x, double y, double length, int hp, int atk, double vitesse, boolean directionDroite) {
         super(x, y, length, hp, atk, vitesse);
+        this.directionDroite = directionDroite;
+    }
+
+    public boolean isDirectionDroite() {
+        return directionDroite;
+    }
+
+    public void setDroite(boolean directionDroite) {
+        this.directionDroite = directionDroite;
+    }
+
+    public void creeMissile(List<Missiles> missilesDispo) {
+        Missiles m = new Missiles(getPosX(), getPosY(), 0.05, false, false);
+        missilesDispo.add(m);
     }
 
     /**
@@ -22,22 +39,13 @@ public class Monster extends Entite {
     /**
      * Met à jour la position du joueur en fonction des touches préssé.
      */
-    public void update() {
-        // Si la flèche gauche est préssé
-        if (StdDraw.isKeyPressed(37)) { 
-            mouvementGauche();
-        }
-        // Si la flèche haut est préssé
-        if (StdDraw.isKeyPressed(38)) {
-            mouvementHaut();
-        }
-        // Si la flèche droite est préssé
-        if (StdDraw.isKeyPressed(39)) {
+    public void update(boolean directionDroite) {
+
+        if (directionDroite){
             mouvementDroit();
         }
-        // Si la flèche bas est préssé
-        if (StdDraw.isKeyPressed(40)) {
-            mouvementBas();
+        else {
+            mouvementGauche();
         }
 
     }

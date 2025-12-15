@@ -11,21 +11,21 @@ import engine.StdDraw;
  */
 public class Player extends Entite {
 
-    boolean espaceWasPressed; // Sert a savoir si la touche espace etait appuyée avant
+    int countdownSpacePressed; // Sert a savoir si la touche espace etait appuyée avant
 
     /** Créé un joueur. */
 
     public Player(double x, double y, double length, int hp, int atk, double vitesse) {
         super(x, y, length, hp, atk, vitesse);
-        espaceWasPressed = false;
+        countdownSpacePressed = 0;
     }
 
-    public boolean wasEspacePressed() {
-        return espaceWasPressed;
+    public int getCountdownSpacePressed() {
+        return countdownSpacePressed;
     }
 
-    public void setEspaceWasPressed(boolean espaceWasPressed) {
-        this.espaceWasPressed = espaceWasPressed;
+    public void setCountdownSpacePressed(int countdownSpacePressed) {
+        this.countdownSpacePressed = countdownSpacePressed;
     }
 
     /**
@@ -37,8 +37,8 @@ public class Player extends Entite {
     }
 
     public void creeMissile(List<Missiles> missilesDispo) {
-        if (missilesDispo.size() < 3) {
-            Missiles m = new Missiles(getPosX(), getPosY(), 0.15, false);
+        if (missilesDispo.size() < 3) { // Crée un nouveau missile uniquement s'il y a de la place dans l'écran.
+            Missiles m = new Missiles(getPosX(), getPosY(), 0.05, false, true);
             missilesDispo.add(m);
         }
     }
@@ -56,12 +56,15 @@ public class Player extends Entite {
             mouvementDroit();
         }
 
-        if (StdDraw.isKeyPressed(32) && !wasEspacePressed()) {
-            creeMissile(missilesDispo);
-            setEspaceWasPressed(true);
-        } else {
-            setEspaceWasPressed(false);
+        if (countdownSpacePressed > 0.0) { // Création d'un coountdown entre chaque tir par le joueur. On lance un tir par ms.
+                                           // Cela empêche que les tirs se collent entre eux.
+            setCountdownSpacePressed(getCountdownSpacePressed()-1);
         }
+
+        if (StdDraw.isKeyPressed(32) && (countdownSpacePressed == 0.0)) {
+            creeMissile(missilesDispo);
+            setCountdownSpacePressed(3); // On remet le compteur à 3 après avoir crée notre missile.
+        } 
     }
 
 }
