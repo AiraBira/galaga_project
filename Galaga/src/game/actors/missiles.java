@@ -10,7 +10,7 @@ public class Missiles extends Mouvements {
     public Missiles(double posX, double posY, double vitesse, boolean touche, boolean mouvHaut) { // L'argument touche permet de faire
                                                                                 // disparaitre le missile s'il touche
                                                                                 // qqch
-        super(posX, posY, vitesse, 0.005);
+        super(posX, posY, vitesse, 0.005, 0.015);
         this.touche = touche;
         this.mouvHaut = mouvHaut;
     }
@@ -33,7 +33,7 @@ public class Missiles extends Mouvements {
 
     public void draw() {
         StdDraw.setPenColor(StdDraw.GREEN);
-        StdDraw.filledRectangle(getPosX(), getPosY(), getLength(), 0.05);
+        StdDraw.filledRectangle(getPosX(), getPosY(), getLongueur(), getLargeur());
     }
 
     @Override
@@ -52,8 +52,7 @@ public class Missiles extends Mouvements {
         }
         else {
             mouvementBas();
-        }
-        
+        } 
     }
 
     

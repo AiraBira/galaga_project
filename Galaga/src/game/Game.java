@@ -88,6 +88,23 @@ public class Game {
                 listMissiles.remove(i);
             }
         }
+
+        for (int i = 0 ; i < listMissiles.size() ; i++) {
+            double hautMissile = listMissiles.get(i).getPosY() + (listMissiles.get(i).getLongueur());
+            double gaucheMissile = listMissiles.get(i).getPosX()-(listMissiles.get(i).getLargeur());
+            double droiteMissile = listMissiles.get(i).getPosX()+(listMissiles.get(i).getLargeur());
+            
+            for (Monster monster : formation1.getListeMonstres()){
+                double basMonstre = monster.getPosY() - (monster.getLength()/2);
+                if ( (  (gaucheMissile <= monster.getPosX()+(monster.getLength()/2)) && 
+                        (droiteMissile >= monster.getPosX()-(monster.getLength()/2))) &&
+                        (hautMissile >= basMonstre)) {
+
+                            listMissiles.remove(i);
+                            break;
+                    }
+            }
+        }
     }
 
     /*  Met a jour les attributs de tous les éléments du jeu  */
@@ -95,11 +112,10 @@ public class Game {
         player.update(missilesDispo);
         formation1.update();
 
-        verificationMissiles(missilesDispo);
-
         for (Missiles missiles : missilesDispo) {
             missiles.update();
         }
 
+        verificationMissiles(missilesDispo);
     }
 }

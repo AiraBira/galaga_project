@@ -6,12 +6,22 @@ public abstract class Mouvements {
     double posY;
     double length;
     double vitesse;
+    double longueur;
+    double largeur;
 
     public Mouvements(double posX, double posY, double vitesse, double length) {
         this.posX = posX;
         this.posY = posY;
         this.vitesse = vitesse;
         this.length = length;
+    }
+
+    public Mouvements(double posX, double posY, double vitesse, double longueur, double largeur) {
+        this.posX = posX;
+        this.posY = posY;
+        this.vitesse = vitesse;
+        this.longueur = longueur;
+        this.largeur = largeur;
     }
 
     public double getPosX() {
@@ -46,6 +56,13 @@ public abstract class Mouvements {
         this.length = length;
     }
 
+    public double getLongueur() {
+        return longueur;
+    }
+
+    public double getLargeur() {
+        return largeur;
+    }
     
     public void mouvementDroit() {
         setPosX(getPosX() + getVitesse());
