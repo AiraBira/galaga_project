@@ -15,12 +15,14 @@ public class Game {
     public Formation formation1;
     public Player player;
     public List<Missiles> missilesDispo;
-
+    public ZoneScore zoneScore;
+    public ZoneInfo zoneInfo;
     /**
      * Créé un jeu avec tous les éléments qui le composent
      */
     public Game() {
 
+        
         missilesDispo = new ArrayList<>();
         player = new Player(0.5, 0.25, 0.05, 3, 1, 0.01);
         List<Pair<Double, Double>> tabPos = new ArrayList<>();
@@ -32,6 +34,8 @@ public class Game {
         tabPos.add(new Pair<Double, Double>(0.5, 0.7));
 
         formation1 = new Formation(6, tabPos);
+        zoneScore = new ZoneScore(0, 0);
+        zoneInfo = new ZoneInfo(0);
     }
 
     /**
@@ -72,6 +76,8 @@ public class Game {
      * Dessine tous les éléments du jeu
      */
     public void draw() {
+        zoneScore.draw();
+        zoneInfo.draw();
         player.draw();
         formation1.draw();
 
@@ -84,7 +90,7 @@ public class Game {
     // supprime des missiles de la liste si ils dépassent le haut de l'écran.
     public void verificationMissiles(List<Missiles> listMissiles){ 
         for(int i = 0 ; i < listMissiles.size(); i++) {
-            if (listMissiles.get(i).getPosY() - listMissiles.get(i).getLength() >= 1.0) { // le bas de l'écran est Y=0 et le haut est Y=1 !
+            if (listMissiles.get(i).getPosY() + listMissiles.get(i).getLongueur() > 0.91) { // le bas de l'écran est Y=0 et le haut est Y=1 !
                 listMissiles.remove(i);
             }
         }

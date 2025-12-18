@@ -38,7 +38,7 @@ public class Player extends Entite {
 
     public void creeMissile(List<Missiles> missilesDispo) {
         if (missilesDispo.size() < 3) { // Crée un nouveau missile uniquement s'il y a de la place dans l'écran.
-            Missiles m = new Missiles(getPosX(), getPosY()+(getLength()/2), 0.05, false, true);
+            Missiles m = new Missiles(getPosX(), getPosY()+(getLength()/2), 0.04, false, true);
             missilesDispo.add(m);
         }
     }
