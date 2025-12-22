@@ -6,14 +6,15 @@ import java.util.List;
 public class Formation {
     private List<Monster> listeMonstres;
     private int nbrMonstres;
-    private static final double LENGTH = 0.05;
-    private boolean directionDroite = true;
+    private boolean directionDroite;
 
-    public Formation(int nbrMonstres, List<Pair<Double, Double>> tabPositions) {
-        this.listeMonstres = new ArrayList<>();
-        this.nbrMonstres = nbrMonstres;
-        for (int i = 0; i < nbrMonstres; i++) {
-            listeMonstres.add(new Monster(tabPositions.get(i).getKey(), tabPositions.get(i).getValue(), LENGTH, 1, 1, 0.01, directionDroite));
+    public Formation(List<Monster> listeMonstres) {
+        this.listeMonstres = listeMonstres;
+        this.nbrMonstres = listeMonstres.size();
+        this.directionDroite = true;
+
+        for (int i = 0 ; i < nbrMonstres ; i++) {
+            listeMonstres.get(i).setDroite(directionDroite);
         }
     }
 
@@ -32,10 +33,6 @@ public class Formation {
 
     public void setNbrMonstres(int nbrMonstres) {
         this.nbrMonstres = nbrMonstres;
-    }
-
-    public double getLength() {
-        return LENGTH;
     }
 
     public boolean isDirectionDroite() {

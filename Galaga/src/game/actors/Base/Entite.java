@@ -4,7 +4,6 @@ import java.util.List;
 
 public abstract class Entite extends Mouvements {
     protected int hp; // vie totale
-    protected int atk; // points d'attaque de l'entité 7
     protected double vitesse;
     //si on veut plus tard :  protected int def; // points de défense de l'entité
     
@@ -15,11 +14,10 @@ public abstract class Entite extends Mouvements {
      * @param length largeur de l'entité
      */
 
-    public Entite(double x, double y, double length, int hp, int atk, double vitesse) { 
+    public Entite(double x, double y, double length, double vitesse, int hp) { 
         super(x,y, vitesse, length);
         this.length = length;
         this.hp = hp;
-        this.atk = atk;
     }
 
     public int getHp() {
@@ -28,14 +26,6 @@ public abstract class Entite extends Mouvements {
 
     public void setHp(int hp) {
         this.hp = hp;
-    }
-
-    public int getAtk() {
-        return atk;
-    }
-
-    public void setAtk(int atk) {
-        this.atk = atk;
     }
 
     /** Dessine de l'entité, elle sera implémenté dans ses classes filles plus tard. */
@@ -56,16 +46,11 @@ public abstract class Entite extends Mouvements {
         return getHp() == 0;
     }
 
-    public void autoSuppression(){} // à utiliser lorsque l'entité est morte et que l'on veut qu'elle ne s'affiche plus (et donc la supprimer)
-
     public void tire(Entite cible){ // attaque une autre entité
         if (!cible.isDead()){
-            cible.degats(this.getAtk());
+            cible.degats(1);
         }
     }
-
-    public abstract void creeMissile(List<Missiles> missilesDispo);
-
     
         
 }

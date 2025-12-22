@@ -15,8 +15,8 @@ public class Player extends Entite {
 
     /** Créé un joueur. */
 
-    public Player(double x, double y, double length, int hp, int atk, double vitesse) {
-        super(x, y, length, hp, atk, vitesse);
+    public Player(double x, double y, double length, int hp, double vitesse) {
+        super(x, y, length, vitesse, hp);
         countdownSpacePressed = 0;
     }
 

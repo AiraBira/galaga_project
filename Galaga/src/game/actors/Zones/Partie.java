@@ -61,7 +61,13 @@ public class Partie {
     public void fin_partie_draw() {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
         StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
-        StdDraw.text(0.5, 0.60, "FIN DE PARTIE");
+        StdDraw.setFont(FONT2);
+        StdDraw.text(0.5, 0.65, "FIN DE PARTIE");
+
+        StdDraw.setFont(FONT1);
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.text(0.5, 0.45, "PRESS SPACE TO REPLAY");
     } 
 }

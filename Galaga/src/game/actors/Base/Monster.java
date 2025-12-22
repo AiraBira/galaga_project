@@ -7,12 +7,16 @@ import engine.StdDraw;
 public class Monster extends Entite {
 
     boolean directionDroite;
+    protected int valeur;
+    protected static final int HP = 1;
 
     /** Créé un joueur. */
 
-    public Monster(double x, double y, double length, int hp, int atk, double vitesse, boolean directionDroite) {
-        super(x, y, length, hp, atk, vitesse);
+    public Monster(double x, double y, double length, int valeur, double vitesse) {
+        
+        super(x, y, length, vitesse, HP);
         this.directionDroite = directionDroite;
+        this.valeur = valeur;
     }
 
     public boolean isDirectionDroite() {
@@ -48,6 +52,10 @@ public class Monster extends Entite {
             mouvementGauche();
         }
 
+    }
+
+    public int getValeur() {
+        return valeur;
     }
 
 }

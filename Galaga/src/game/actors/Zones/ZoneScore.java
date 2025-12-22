@@ -62,8 +62,9 @@ public class ZoneScore {
         StdDraw.line(getPosx(), getPosy() - getLongueur(), getPosx() + getLargeur(), getPosy() - getLongueur());
     } 
 
-    public void update(int score){
+    public void update(int score, int bestScore){
         setScore(score);
+        setBestScore(bestScore);
     }
 
 }
