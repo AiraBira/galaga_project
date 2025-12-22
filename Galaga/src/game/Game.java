@@ -4,31 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 import engine.StdDraw;
-import game.actors.*;
+import game.actors.Base.*;
+import game.actors.Zones.*;
+import game.actors.Monsters.*;
+
 
 /**
  * Classe du jeu principal.
  * Gère la création de l'espace de jeu et la boucle de jeu en temps réel.
  */
 public class Game {
-    // public Player player; // Jouer, seul éléments actuellement dans notre jeu
+
+    public static final int TOTAL_NIVEAUX = 1; // à changer lorqu'on rajoute des niveaux !! 
     public Formation formation1;
     public Player player;
     public List<Missiles> missilesDispo;
+    public boolean commencerPartie;
 
     public int score;
     public int bestScore;
     public ZoneScore zoneScore;
     public ZoneInfo zoneInfo;
-    public ZonePartieFinie zonePartieFinie;
+    public Partie ecran;
 
-    /**
-     * Créé un jeu avec tous les éléments qui le composent
-     */
+    public int niveau_actuel;
+    public boolean afficherNiveau;
+    public int countdown_affichage_niveau; // Comme le temps d'une boucle du jeu est 30 ms et qu'on veut 2s de pause.
+                                           // 2s = 2000 ms et 2000/30 = à environ 67. Donc on doit faire 67 boucles 
+                                           // pour afficher le niveau pendant 2s.
+    public int etat_jeu = 0; // Si 0 -> Ecran debut de partie
+                             // Si 1 -> Affichage niveau
+                             // Si 2 -> Jeu 
+                             // Si 3 -> Fin de partie
+    
+
+    /* Créé un jeu avec tous les éléments qui le composent */
     public Game() {
 
         missilesDispo = new ArrayList<>();
+        afficherNiveau = false;
+        niveau_actuel = 1;
+        countdown_affichage_niveau = 67;
         player = new Player(0.5, 0.25, 0.05, 3, 1, 0.01);
+
+        // On initialise au debut de la partie.
+        etat_jeu = 0;
+        commencerPartie = false;
 
         // Positions de la formation 1 //
         List<Pair<Double, Double>> tabPos = new ArrayList<>();
@@ -39,15 +60,26 @@ public class Game {
         tabPos.add(new Pair<Double, Double>(0.55, 0.75));
         tabPos.add(new Pair<Double, Double>(0.5, 0.7));
 
-        // Gérer les formations //
+        // Gérer les formations de chaque niveau h//
         formation1 = new Formation(6, tabPos);
+
+        // Ecran d'accueil //
+        ecran = new Partie(getNiveau_actuel());
+        
 
         // Gérer le score : //
         score = 0;
         bestScore = 0;
         zoneScore = new ZoneScore(score, bestScore);
+
         zoneInfo = new ZoneInfo(0);
-        zonePartieFinie = new ZonePartieFinie();
+    }
+    public int getEtatJeu(){
+        return etat_jeu;
+    }
+
+    public void setEtatJeu(int nouvelEtat){
+        this.etat_jeu = nouvelEtat;
     }
 
     public int getScore() {
@@ -66,6 +98,50 @@ public class Game {
         this.bestScore = bestScore;
     }
 
+    public static int getTotalNiveaux() {
+        return TOTAL_NIVEAUX;
+    }
+
+    public Formation getFormation1() {
+        return formation1;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public List<Missiles> getMissilesDispo() {
+        return missilesDispo;
+    }
+
+    public boolean isCommencerPartie() {
+        return commencerPartie;
+    }
+
+    public ZoneScore getZoneScore() {
+        return zoneScore;
+    }
+
+    public ZoneInfo getZoneInfo() {
+        return zoneInfo;
+    }
+
+    public Partie getPartie() {
+        return ecran;
+    }
+
+    public int getNiveau_actuel() {
+        return niveau_actuel;
+    }
+
+    public boolean isAfficherNiveau() {
+        return afficherNiveau;
+    }
+
+    public void setAfficherNiveau(boolean a) {
+        this.afficherNiveau = a;
+    }
+
     /**
      * Initialise l'espace de jeu
      */
@@ -74,9 +150,7 @@ public class Game {
         StdDraw.enableDoubleBuffering();
     }
 
-    /**
-     * Initialise le jeu et lance la boucle de jeu en temps réel
-     */
+    /* Initialise le jeu et lance la boucle de jeu en temps réel */
     public void launch() {
         init();
 
@@ -91,32 +165,52 @@ public class Game {
         }
     }
 
-    /**
-     * Condition d'arrêt du jeu
-     * 
-     * @return true car on n'as pas encore de conidtions d'arrêt
+    /*  Condition d'arrêt du jeu
+     * @return true car on n'as pas encore de conditions d'arrêt
      */
     private boolean isGameRunning() {
         return true;
     }
 
+
     /** Dessine tous les éléments du jeu */
     public void draw() {
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(0.0, 0.0, 350, 350);
 
-        zoneScore.draw();
-        zoneInfo.draw(player.getHp());
-        player.draw();
-
-        formation1.draw();
-
-        for (Missiles m : missilesDispo) {
-            m.draw();
+        if (!commencerPartie ) {
+            ecran.debut_partie_draw();
+            setAfficherNiveau(true);
         }
+        else {
+            if (isAfficherNiveau()) {
+                ecran.niveau_affichage_draw();
+                countdown_affichage_niveau--;
+                if (countdown_affichage_niveau==0){
+                    setAfficherNiveau(false);
+                    countdown_affichage_niveau = 67; // On réinitialise le compteur d'affichage du niveau à 67.
+                }
+            }
+            else {
+                // On fait un fond noir.
+                StdDraw.setPenColor(StdDraw.BLACK);
+                StdDraw.filledRectangle(0.0, 0.0, 350, 350);
 
-        if (formation1.niveauTermine()) {
-            zonePartieFinie.draw();
+                // On dessine les éléments du jeu.
+                zoneScore.draw();
+                zoneInfo.draw(getPlayer().getHp());
+                getPlayer().draw();
+                getFormation1().draw();
+
+                // On dessine les missiles lancés.
+                for (Missiles m : getMissilesDispo()) {
+                    m.draw();
+                }
+
+                // Si la formation des monstres est vide  et qu'il ne reste plus de niveaux, on termine la partie.
+                if (getFormation1().niveauTermine() && getNiveau_actuel() == getTotalNiveaux()) {
+                    ecran.fin_partie_draw();
+                }
+
+            }
         }
     }
 
@@ -128,7 +222,7 @@ public class Game {
     }
 
     // supprime des missiles de la liste si ils dépassent le haut de l'écran.
-    public void verificationMissiles(List<Missiles> listMissiles) {
+    public void suppressionMissiles(List<Missiles> listMissiles) {
         for (int i = 0; i < listMissiles.size(); i++) {
             if (listMissiles.get(i).getPosY() + listMissiles.get(i).getLongueur() > 0.91) { // le bas de l'écran est Y=0
                                                                                             // et le haut est Y=1 !
@@ -141,7 +235,7 @@ public class Game {
             double gaucheMissile = listMissiles.get(i).getPosX() - (listMissiles.get(i).getLargeur());
             double droiteMissile = listMissiles.get(i).getPosX() + (listMissiles.get(i).getLargeur());
 
-            for (Monster monster : formation1.getListeMonstres()) {
+            for (Monster monster : getFormation1().getListeMonstres()) {
                 double basMonstre = monster.getPosY() - (monster.getLength() / 2);
                 if (((gaucheMissile <= monster.getPosX() + (monster.getLength() / 2)) &&
                         (droiteMissile >= monster.getPosX() - (monster.getLength() / 2))) &&
@@ -158,20 +252,30 @@ public class Game {
 
     /* Met a jour les attributs de tous les éléments du jeu */
     private void update() {
-        player.update(missilesDispo);
+        player.update(getMissilesDispo());
+        zoneScore.update(getScore());
+
+        if (getEtatJeu()==0){
+            
+            if (StdDraw.isKeyPressed(32)) {
+            commencerPartie = true;
+            }
+        }
+
+        
+
         if (!formation1.niveauTermine()) {
             formation1.update();
         }
-
-        zoneScore.update(score);
-        // if(score == 3){
-        // player.setHp(2);
-        // }
 
         for (Missiles missiles : missilesDispo) {
             missiles.update();
         }
 
-        verificationMissiles(missilesDispo);
+        // if(score == 3){
+        // player.setHp(2);
+        // }
+
+        suppressionMissiles(getMissilesDispo()); // Supprime les missiles qu'il faut supprimer 
     }
 }

@@ -1,4 +1,4 @@
-package game.actors;
+package game.actors.Base;
 
 public class Pair<T1, T2> {
     private T1 key;

@@ -1,4 +1,4 @@
-package game.actors;
+package game.actors.Base;
 
 import java.util.ArrayList;
 import java.util.List;

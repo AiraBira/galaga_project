@@ -1,4 +1,4 @@
-package game.actors;
+package game.actors.Base;
 
 import engine.StdDraw;
 

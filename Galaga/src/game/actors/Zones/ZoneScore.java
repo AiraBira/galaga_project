@@ -1,5 +1,6 @@
-package game.actors;
+package game.actors.Zones;
 import engine.StdDraw;
+import java.awt.Font;
 
 
 public class ZoneScore {
@@ -10,6 +11,7 @@ public class ZoneScore {
     private static final double LARGEUR = 1;
     private static final double POSX = 0.0;
     private static final double POSY = 1.0;
+    private static final Font FONT = new Font("SansSerif", Font.BOLD, 20);
     
     public ZoneScore(int score, int bestScore) {
         this.score = score;
@@ -39,6 +41,7 @@ public class ZoneScore {
     public static double getLargeur() {
         return LARGEUR;
     }
+    
 
     public static double getPosx() {
         return POSX;
@@ -49,6 +52,7 @@ public class ZoneScore {
     }
 
     public void draw() {
+        StdDraw.setFont(FONT);
         StdDraw.setPenColor(StdDraw.RED);
         StdDraw.text(0.5,0.97, "HIGH SCORE");
         StdDraw.setPenColor(StdDraw.WHITE);
