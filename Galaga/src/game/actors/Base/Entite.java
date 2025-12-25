@@ -4,7 +4,8 @@ import java.util.List;
 
 public abstract class Entite extends Mouvements {
     protected int hp; // vie totale
-    protected double vitesse;
+    protected double Xinit;
+    protected double Yinit;
     //si on veut plus tard :  protected int def; // points de défense de l'entité
     
     
@@ -18,6 +19,8 @@ public abstract class Entite extends Mouvements {
         super(x,y, vitesse, length);
         this.length = length;
         this.hp = hp;
+        this.Xinit = x;
+        this.Yinit = y;
     }
 
     public int getHp() {
@@ -28,6 +31,19 @@ public abstract class Entite extends Mouvements {
         this.hp = hp;
     }
 
+    public double getVitesse() {
+        return vitesse;
+    }
+
+    public double getXinit() {
+        return Xinit;
+    }
+
+    public double getYinit() {
+        return Yinit;
+    }
+    
+    
     /** Dessine de l'entité, elle sera implémenté dans ses classes filles plus tard. */
     public abstract void draw();
 
@@ -51,6 +67,7 @@ public abstract class Entite extends Mouvements {
             cible.degats(1);
         }
     }
+
     
         
 }

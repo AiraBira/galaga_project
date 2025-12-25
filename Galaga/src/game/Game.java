@@ -35,6 +35,8 @@ public class Game {
     public ZoneInfo zoneInfo;
     public Partie ecran;
 
+    public int countdown_touche_espace;
+    public boolean espace_a_ete_appuyee;
     public int countdown_affichage_niveau; // Comme le temps d'une boucle du jeu est 30 ms et qu'on veut 2s de pause.
                                            // 2s = 2000 ms et 2000/30 = à environ 67. Donc on doit faire 67 boucles
                                            // pour afficher le niveau pendant 2s.
@@ -49,6 +51,9 @@ public class Game {
     /* Créé un jeu avec tous les éléments qui le composent */
     public Game() {
 
+        countdown_touche_espace = 0;
+        espace_a_ete_appuyee = false;
+
         // Gérer les niveaux.
         listNiveaux = new ArrayList<>();
         listNiveaux.add(niveau1);
@@ -56,6 +61,7 @@ public class Game {
         niveau_actuel = 1;
         countdown_affichage_niveau = 67;
         afficherNiveau = false;
+        
        
         missilesDispo = new ArrayList<>();
         player = new Player(0.5, 0.25, 0.05, 3, 0.01);
@@ -147,6 +153,23 @@ public class Game {
         this.afficherNiveau = a;
     }
 
+    public int getCountdown_espace(){
+        return countdown_touche_espace;
+    }
+
+    public void setCountdown_espace(int c){
+        countdown_touche_espace = c;
+        
+    }
+    
+    public boolean getEspace_a_ete_appuyee(){
+        return espace_a_ete_appuyee;
+    }
+
+    public void setEspace_a_ete_appuyee(boolean b){
+        espace_a_ete_appuyee = b;
+    }
+
     /**
      * Initialise l'espace de jeu
      */
@@ -213,7 +236,7 @@ public class Game {
 
     /* Met a jour les attributs de tous les éléments du jeu */
     private void update() {
-        
+
         if (getEtatJeu() == 0) {
             if (StdDraw.isKeyPressed(32)) {
                 setEtatJeu(1);
@@ -228,34 +251,52 @@ public class Game {
         }
         else if (getEtatJeu() == 2) {
             if (!getFormation(getNiveau_actuel()-1).niveauTermine()) {
-                getFormation(getNiveau_actuel()-1).update();
+                getFormation(getNiveau_actuel()-1).update(player);
             }
 
 
             player.update(getMissilesDispo());
             zoneScore.update(getScore(), getBestScore());
-
+            playerTouche();
+            
             for (Missiles missiles : missilesDispo) {
                 missiles.update();
             }
+            for (Missiles missiles : getFormation(getNiveau_actuel()-1).getListeMissilesEnnemis()) {
+                missiles.update();
+            }
 
-            suppressionMissiles(getMissilesDispo()); // Supprime les missiles qu'il faut supprimer
+            suppressionMissilesPlayer(getMissilesDispo()); // Supprime les missiles qu'il faut supprimer
 
             // Si la formation des monstres est vide et qu'il ne reste plus de niveaux, on
             // termine la partie. Donc on passe à l'état de fin de partie qu'est le 3.
             if (getFormation(getNiveau_actuel()-1).niveauTermine() && getNiveau_actuel() == getTotalNiveaux()) {
                 setEtatJeu(3);
             }
-
-            if (getFormation(getNiveau_actuel()-1).niveauTermine()){
+            else if (getFormation(getNiveau_actuel()-1).niveauTermine()){
                 setNiveau_actuel(getNiveau_actuel()+1);
+                player.setPosX(0.5);
+                player.setPosY(0.25);
+                Partie ecran_new = new Partie(getNiveau_actuel());
+                setEcran(ecran_new);
+                setEtatJeu(1);
             }
-
         }
 
         else {
-            if (StdDraw.isKeyPressed(32)){
-                replay();
+            if (StdDraw.isKeyPressed(32) && !getEspace_a_ete_appuyee()){
+                setEspace_a_ete_appuyee(true);
+                setCountdown_espace(30);
+            }
+            
+            if (getEspace_a_ete_appuyee()) {
+                if (getEspace_a_ete_appuyee() && getCountdown_espace() > 0) {
+                    setCountdown_espace(getCountdown_espace()-1);
+                }
+                else { // Une fois qu'on arrive à 0 on remet l'espace a false et on replay
+                    setEspace_a_ete_appuyee(false);
+                    replay();
+                }
             }
         }
 
@@ -263,6 +304,7 @@ public class Game {
         // player.setHp(2);
         // }    
     }
+
     public void replay(){
         missilesDispo.clear();
         setAfficherNiveau(false);
@@ -302,9 +344,33 @@ public class Game {
         }
     }
 
-    // supprime des missiles de la liste si ils dépassent le haut de l'écran.
-    public void suppressionMissiles(List<Missiles> listMissiles) {
-        for (int i = 0; i < listMissiles.size(); i++) {
+    public void playerTouche(){
+        for (Missiles mis : getFormation(getNiveau_actuel()-1).getListeMissilesEnnemis()){
+            double hautMissile = mis.getPosY() + mis.getLongueur();
+            double basMissile = mis.getPosY() - mis.getLongueur();
+            double gaucheMissile = mis.getPosX() - mis.getLargeur();
+            double droiteMissile = mis.getPosX() + mis.getLargeur();
+
+            double hautPlayer = player.getPosY() + player.getLength() / 2;
+            double basPlayer = player.getPosY() - player.getLength() / 2;
+            double gauchePlayer = player.getPosX() - player.getLength() / 2;
+            double droitePlayer = player.getPosX() + player.getLength() / 2;
+
+            boolean collisionX = droiteMissile >= gauchePlayer && gaucheMissile <= droitePlayer;
+            boolean collisionY = hautMissile >= basPlayer && basMissile <= hautPlayer;
+
+            if (collisionX && collisionY){
+                player.perdreVie();
+                getFormation(getNiveau_actuel()-1).recommencer();
+                player.setPosX(player.getXinit());
+                player.setPosY(player.getYinit());
+            }
+        }
+    }
+
+    
+    public void suppressionMissilesPlayer(List<Missiles> listMissiles) {
+        for (int i = 0; i < listMissiles.size(); i++) { // supprime des missiles de la liste si ils dépassent le haut de l'écran.
             if (listMissiles.get(i).getPosY() + listMissiles.get(i).getLongueur() > 0.91) { // le bas de l'écran est Y=0
                                                                                             // et le haut est Y=1 !
                 listMissiles.remove(i);
@@ -317,6 +383,19 @@ public class Game {
             double droiteMissile = listMissiles.get(i).getPosX() + (listMissiles.get(i).getLargeur());
 
             for (Monster monster : getFormation(getNiveau_actuel()-1).getListeMonstres()) {
+                double basMonstre = monster.getPosY() - (monster.getLength() / 2);
+                if (((gaucheMissile <= monster.getPosX() + (monster.getLength() / 2)) &&
+                        (droiteMissile >= monster.getPosX() - (monster.getLength() / 2))) &&
+                        (hautMissile >= basMonstre)) {
+
+                    // Si un monstre est touché :
+                    monstreTouche(monster);
+                    listMissiles.remove(i);
+                    break;
+                }
+            }
+
+            for (Monster monster : getFormation(getNiveau_actuel()-1).getListeMonstresHorsFormation()) {
                 double basMonstre = monster.getPosY() - (monster.getLength() / 2);
                 if (((gaucheMissile <= monster.getPosX() + (monster.getLength() / 2)) &&
                         (droiteMissile >= monster.getPosX() - (monster.getLength() / 2))) &&

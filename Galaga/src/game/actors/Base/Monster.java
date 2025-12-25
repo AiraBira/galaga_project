@@ -6,6 +6,7 @@ import engine.StdDraw;
 
 public class Monster extends Entite {
 
+    boolean enAttaque;
     boolean directionDroite;
     protected int valeur;
     protected static final int HP = 1;
@@ -27,9 +28,9 @@ public class Monster extends Entite {
         this.directionDroite = directionDroite;
     }
 
-    public void creeMissile(List<Missiles> missilesDispo) {
-        Missiles m = new Missiles(getPosX(), getPosY(), 0.05, false, false);
-        missilesDispo.add(m);
+    public void creeMissile(List<Missiles> missilesMonstres) {
+        Missiles m = new Missiles(getPosX(), getPosY(), 0.025, false, false);
+        missilesMonstres.add(m);
     }
 
     /**
@@ -40,18 +41,31 @@ public class Monster extends Entite {
         StdDraw.filledCircle(getPosX(), getPosY(), getLength() / 2);
     }
 
-    /**
-     * Met à jour la position du joueur en fonction des touches préssé.
-     */
-    public void update(boolean directionDroite) {
+    /* Met à jour la position du joueur en fonction des touches préssé. */
+    public void update(boolean direction, Player p) {} // Utilisée pour le niveau 1 
 
-        if (directionDroite){
-            mouvementDroit();
-        }
-        else {
-            mouvementGauche();
-        }
+    public boolean isOneOfFirst(List<Monster> monstres){
 
+        for (Monster m : monstres){
+            if (m != this && m.getPosY() < getPosY()) {
+
+                double gaucheMonstre = m.getPosX() - m.getLength()/2;
+                double droiteMonstre = m.getPosX() + m.getLength()/2;
+                
+                if (droiteMonstre > (getPosX() - getLength()/2) && gaucheMonstre < (getPosX() + getLength()/2)) {
+                    return false; // Bloqué par ce monstre
+                }
+            }
+        }
+        return true; // Libre
+    }
+
+    public boolean isEnAttaque() {
+        return enAttaque;
+    }
+
+    public void setEnAttaque(boolean enAttaque) {
+        this.enAttaque = enAttaque;
     }
 
     public int getValeur() {

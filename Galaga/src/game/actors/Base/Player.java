@@ -43,6 +43,17 @@ public class Player extends Entite {
         }
     }
 
+    public void perdreVie(){
+        setHp(getHp()-1);
+        if (getHp()<=0){
+            setHp(0);
+        }
+    }
+
+    public void gagnerVie(){
+        setHp(getHp()+1);
+    }
+
     /**
      * Met à jour la position du joueur en fonction des touches préssé.
      */
