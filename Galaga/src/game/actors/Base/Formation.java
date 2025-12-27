@@ -171,22 +171,29 @@ public class Formation {
 
         //// Tire aléatoirement parmis les monstres en première ligne et ceux hors formation : ////// 
         for (Monster m : tireurs){
-            if (Math.random() < 0.005) {
-                m.creeMissile(getListeMissilesEnnemis());
+            if (!m.isDead()){ // Vérifie que les tireurs sont bien vivants.
+                if (Math.random() < 0.005) {
+                    m.creeMissile(getListeMissilesEnnemis());
+                }
             }
         }
 
     }
 
     public void recommencer(){
+        // On remet tous les monstres hors formation dans la formation
+        for (int i = getListeMonstresHorsFormation().size()-1; i>= 0 ; i--){
+            getListeMonstresHorsFormation().get(i).setEnAttaque(false);
+            getListeMonstres().add(getListeMonstresHorsFormation().get(i));
+            getListeMonstresHorsFormation().remove(getListeMonstresHorsFormation().get(i));
+
+        }
+        // On réinitialise les positions de chaque monstre.
         for (Monster m : getListeMonstres()){
             m.setPosX(m.getXinit());
             m.setPosY(m.getYinit());
         }
-        for (Monster m : getListeMonstresHorsFormation()){
-            m.setPosX(m.getXinit());
-            m.setPosY(m.getYinit());
-        }
+        
     }
 
     
