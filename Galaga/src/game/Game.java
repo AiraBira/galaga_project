@@ -536,8 +536,8 @@ public class Game {
         for (int i = listMon.size()-1; i >= 0 ; i--){
             double hautMonstre = listMon.get(i).getPosY() + listMon.get(i).getLength();
             double basMonstre = listMon.get(i).getPosY() - listMon.get(i).getLength();
-            double droiteMonstre = listMon.get(i).getPosX() + listMon.get(i).getLength();
-            double gaucheMonstre = listMon.get(i).getPosX() - listMon.get(i).getLength();
+            double droiteMonstre = listMon.get(i).getPosX() + listMon.get(i).getLargeur();
+            double gaucheMonstre = listMon.get(i).getPosX() - listMon.get(i).getLargeur();
 
             collisionXMonstre = droiteMonstre >= gauchePlayer && gaucheMonstre <= droitePlayer;
             collisionYMonstre = hautMonstre >= basPlayer && basMonstre <= hautPlayer;
