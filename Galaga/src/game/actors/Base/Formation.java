@@ -9,13 +9,11 @@ public class Formation {
     private boolean directionDroite;
     private static final double VITESSE_FORMATION = 0.001; //pour uniformiser sinon les monstres se rentrent entre eux
     private List<Monster> listeMonstresHorsFormation;
-    private List<Monster> tireurs; // Liste de ceux qui peuvent tirer
     private List<Missiles> listeMissilesEnnemis;
 
     public Formation(List<Monster> listeMonstres) {
         this.listeMonstres = listeMonstres;
         this.listeMonstresHorsFormation = new ArrayList<>();
-        this.tireurs = new ArrayList<>();
         this.nbrMonstres = listeMonstres.size();
         this.directionDroite = true;
         this.listeMissilesEnnemis = new ArrayList<>();
@@ -28,13 +26,6 @@ public class Formation {
         for (Monster m : listeMonstres) {
 
             m.setVitesse(VITESSE_FORMATION);
-            if (m.isOneOfFirst(listeMonstres)){
-                tireurs.add(m);
-            }
-        }
-
-        for (Monster m : listeMonstresHorsFormation){
-            tireurs.add(m);
         }
     }
 
@@ -76,20 +67,12 @@ public class Formation {
         return listeMonstresHorsFormation;
     }
 
-    public List<Monster> getTireurs() {
-        return tireurs;
-    }
-
     public List<Missiles> getListeMissilesEnnemis() {
         return listeMissilesEnnemis;
     }
 
     public void setListeMonstresHorsFormation(List<Monster> listeMonstresHorsFormation) {
         this.listeMonstresHorsFormation = listeMonstresHorsFormation;
-    }
-
-    public void setTireurs(List<Monster> tireurs) {
-        this.tireurs = tireurs;
     }
 
     public void setListeMissilesEnnemis(List<Missiles> listeMissilesEnnemis) {
@@ -115,16 +98,15 @@ public class Formation {
     public void update(Player p) {
 
         ////////////   Supprimer les monstres tués :   ////////////
-        for (int i = 0 ; i < getListeMonstres().size() ; i++){
+        
+        for (int i = getListeMonstres().size()-1; i >= 0 ; i--){
             if (getListeMonstres().get(i).isDead()){
                 getListeMonstres().remove(i);
-                break;
             }
         }
-        for (int i = 0 ; i < getListeMonstresHorsFormation().size() ; i++){
+        for (int i = getListeMonstresHorsFormation().size()-1; i >= 0 ; i--){
             if (getListeMonstresHorsFormation().get(i).isDead()){
                 getListeMonstresHorsFormation().remove(i);
-                break;
             }
         }
 
@@ -169,14 +151,20 @@ public class Formation {
             m.update(isDirectionDroite(), p);
         }
 
-        //// Tire aléatoirement parmis les monstres en première ligne et ceux hors formation : ////// 
-        for (Monster m : tireurs){
-            if (!m.isDead()){ // Vérifie que les tireurs sont bien vivants.
-                if (Math.random() < 0.005) {
-                    m.creeMissile(getListeMissilesEnnemis());
-                }
+        // Tireurs en formation (première ligne uniquement)
+        for (Monster m : listeMonstres) {
+            if (m.isOneOfFirst(listeMonstres) && Math.random() < 0.005) {
+                m.creeMissile(listeMissilesEnnemis);
             }
         }
+
+        // Tireurs hors formation
+        for (Monster m : listeMonstresHorsFormation) {
+            if (Math.random() < 0.005) {
+                m.creeMissile(listeMissilesEnnemis);
+            }
+        }
+
 
     }
 
