@@ -445,7 +445,7 @@ public class Game {
             }  
             if (StdDraw.isKeyPressed(32) && !getEspace_a_ete_appuyee()){
                 setEspace_a_ete_appuyee(true);
-                setCountdown_espace(30);
+                setCountdown_espace(10);
             }
             
             if (getEspace_a_ete_appuyee()) {
@@ -498,6 +498,20 @@ public class Game {
 
     // On verifie les collisions des missiles ennemis contre notre player.
     public void playerTouche(){
+
+        double hautPlayer = player.getPosY() + player.getLength() / 2;
+        double basPlayer = player.getPosY() - player.getLength() / 2;
+        double gauchePlayer = player.getPosX() - player.getLength() / 2;
+        double droitePlayer = player.getPosX() + player.getLength() / 2;
+
+        boolean collisionXMissile = false;
+        boolean collisionYMissile = false;
+        boolean missileTouche = false;
+
+        boolean collisionXMonstre = false;
+        boolean collisionYMonstre = false;
+        boolean monstreTouche = false;
+
         List<Missiles> listMis = getFormation(getNiveau_actuel()-1).getListeMissilesEnnemis(); // On range dans une variable pour pas faire multiples appels.
 
         for (int i = listMis.size()-1; i >= 0; i--){ // Si on fait à l'envers, quand on aura a supprimer un élément de la liste, on supprime l'actuel
@@ -507,16 +521,35 @@ public class Game {
             double gaucheMissile = listMis.get(i).getPosX() - listMis.get(i).getLargeur();
             double droiteMissile = listMis.get(i).getPosX() + listMis.get(i).getLargeur();
 
-            double hautPlayer = player.getPosY() + player.getLength() / 2;
-            double basPlayer = player.getPosY() - player.getLength() / 2;
-            double gauchePlayer = player.getPosX() - player.getLength() / 2;
-            double droitePlayer = player.getPosX() + player.getLength() / 2;
+            collisionXMissile = droiteMissile >= gauchePlayer && gaucheMissile <= droitePlayer;
+            collisionYMissile = hautMissile >= basPlayer && basMissile <= hautPlayer;
 
-            boolean collisionX = droiteMissile >= gauchePlayer && gaucheMissile <= droitePlayer;
-            boolean collisionY = hautMissile >= basPlayer && basMissile <= hautPlayer;
-
-            if (collisionX && collisionY){
+            if (collisionXMissile && collisionYMissile){
                 listMis.remove(i);
+                missileTouche = true;
+            }
+        }
+
+        // Une collision est possible que avec les monstres hors formations qui nous attaquent ! 
+        List<Monster> listMon = getFormation(getNiveau_actuel()-1).getListeMonstresHorsFormation();
+
+        for (int i = listMon.size()-1; i >= 0 ; i--){
+            double hautMonstre = listMon.get(i).getPosY() + listMon.get(i).getLength();
+            double basMonstre = listMon.get(i).getPosY() - listMon.get(i).getLength();
+            double droiteMonstre = listMon.get(i).getPosX() + listMon.get(i).getLength();
+            double gaucheMonstre = listMon.get(i).getPosX() - listMon.get(i).getLength();
+
+            collisionXMonstre = droiteMonstre >= gauchePlayer && gaucheMonstre <= droitePlayer;
+            collisionYMonstre = hautMonstre >= basPlayer && basMonstre <= hautPlayer;
+
+            if (collisionXMonstre && collisionYMonstre){
+                monstreTouche(listMon.get(i));
+                listMon.remove(i);
+                monstreTouche = true;
+            }
+        }
+
+        if ( missileTouche || monstreTouche ){
                 getFormation(getNiveau_actuel()-1).setListeMissilesEnnemis(listMis);
                 player.perdreVie();
                 // Si le player est mort on fini la partie 
@@ -539,9 +572,7 @@ public class Game {
                     setCompteRebours2(15);
                     setEtatJeu(4);
                 }
-                break;
             }
-        }
     }
 
     public void suppressionMissilesPlayer(List<Missiles> listMissiles) {

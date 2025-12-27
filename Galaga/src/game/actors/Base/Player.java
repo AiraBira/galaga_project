@@ -11,12 +11,14 @@ import engine.StdDraw;
  */
 public class Player extends Entite {
 
-    int countdownSpacePressed; // Sert a savoir si la touche espace etait appuyée avant
+    protected int countdownSpacePressed; // Sert a savoir si la touche espace etait appuyée avant
+    public static final String SPRITE = loadSprite("../ressources/sprites/ship.spr"); // On charge notre fichier .spr
+
 
     /** Créé un joueur. */
 
     public Player(double x, double y, double length, int hp, double vitesse) {
-        super(x, y, length, vitesse, hp);
+        super(x, y, length, vitesse, hp, SPRITE);
         countdownSpacePressed = 0;
     }
 
@@ -26,14 +28,6 @@ public class Player extends Entite {
 
     public void setCountdownSpacePressed(int countdownSpacePressed) {
         this.countdownSpacePressed = countdownSpacePressed;
-    }
-
-    /**
-     * Dessine le joueur, ici c'est un rond rouge
-     */
-    public void draw() {
-        StdDraw.setPenColor(StdDraw.RED);
-        StdDraw.filledCircle(getPosX(), getPosY(), getLength() / 2);
     }
 
     public void creeMissile(List<Missiles> missilesDispo) {

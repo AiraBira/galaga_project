@@ -8,9 +8,11 @@ public class Moth extends Monster {
     public static final double TAILLE = 0.06;
     public static final int VALEUR = 300;
     public static final double VITESSE = 0.0005;
+    public static final String SPRITE = loadSprite("../ressources/sprites/catcher.spr"); // On charge notre fichier .spr
+
 
     public Moth(double x, double y) {
-        super(x, y, TAILLE, VALEUR, VITESSE);
+        super(x, y, TAILLE, VALEUR, VITESSE, SPRITE);
         this.capture = false;
     }
 

@@ -1,5 +1,9 @@
 package game.actors.Monsters;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import game.actors.Base.*;
 
 public class Bee extends Monster{
@@ -7,9 +11,10 @@ public class Bee extends Monster{
     public static final double taille = 0.06;
     public static final int valeur = 100;
     public static final double vitesse = 0.002;
-
+    public static final String SPRITE = loadSprite("../ressources/sprites/bee.spr"); // On charge notre fichier .spr
+    
     public Bee(double x, double y) {
-        super(x, y, taille, valeur, vitesse);
+        super(x, y, taille, valeur, vitesse, SPRITE);  // On le met dans le constructeur d'entité pour que ça soit dessiné
     }
 
     public void mouvement_attaque(){

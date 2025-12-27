@@ -13,9 +13,9 @@ public class Monster extends Entite {
 
     /** Créé un joueur. */
 
-    public Monster(double x, double y, double length, int valeur, double vitesse) {
+    public Monster(double x, double y, double length, int valeur, double vitesse, String sprite) {
         
-        super(x, y, length, vitesse, HP);
+        super(x, y, length, vitesse, HP, sprite);
         this.directionDroite = directionDroite;
         this.valeur = valeur;
     }
@@ -31,14 +31,6 @@ public class Monster extends Entite {
     public void creeMissile(List<Missiles> missilesMonstres) {
         Missiles m = new Missiles(getPosX(), getPosY(), 0.025, false, false);
         missilesMonstres.add(m);
-    }
-
-    /**
-     * Dessine le monstre, pour différencier du joueur on fera un rond noir
-     */
-    public void draw() {
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.filledCircle(getPosX(), getPosY(), getLength() / 2);
     }
 
     /* Met à jour la position du joueur en fonction des touches préssé. */
