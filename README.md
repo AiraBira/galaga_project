@@ -67,7 +67,7 @@ Les missiles restent toujours dans la partie de jeu du milieu, elle ne dépasse 
 10.**Mode vies infinies** : s'active et se désactive à l'aide de la touche I sur le clavier.
 
 
-## 🏗️ Architecture du projet
+## Architecture du projet
 
 ```
 Galaga/
