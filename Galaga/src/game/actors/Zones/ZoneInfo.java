@@ -20,7 +20,9 @@ public class ZoneInfo {
     private static final double POSX = 0.0;
     private static final double POSY = 0.0;
 
-    protected List<List<Character>> tabPixels = chargeTableauPixels(loadSpriteVie());
+    protected List<List<Character>> tabPixelsHP = chargeTableauPixels(loadSpriteVie());
+    protected List<List<Character>> tabPixelsLevel = chargeTableauPixels(loadSpriteNiveau());
+
 
     public ZoneInfo(int niveau) {
         this.niveau = niveau;
@@ -106,18 +108,32 @@ public class ZoneInfo {
         return sprite;
     }
 
-    /** Dessine de l'entité, elle sera implémenté dans ses classes filles plus tard. */
-    public void draw(int hp){
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.line(getPosx(), getPosy() + getLongueur(), getPosx()+getLargeur(), getPosy()+getLongueur());
+    public static String loadSpriteNiveau(){ // Utilisée plus tard pour charger nos fichiers .spr
+        String sprite = "";
+        Scanner scan;
+        try {
+            scan = new Scanner(new File("../ressources/sprites/level.spr"));
+            while (scan.hasNextLine()) {
+                sprite += scan.nextLine() + "\n";
+            }
+            scan.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return sprite;
+    }
 
+    /** Dessine de l'entité, elle sera implémenté dans ses classes filles plus tard. */
+    public void draw(int hp, boolean modeInfini){
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLargeur(), getLongueur());
         double gap=0.05;
-        double taillePixel = 0.05 / tabPixels.get(0).size(); // On calcule la taille de pixels qu'on peut mettre 
+        double taillePixel = 0.05 / tabPixelsHP.get(0).size(); // On calcule la taille de pixels qu'on peut mettre 
         for (int vies =1; vies<=hp; vies++){
 
-            for (int i = 0 ; i < tabPixels.size(); i++){
-                for (int j = 0; j < tabPixels.get(i).size(); j++){
-                    Color couleurPixel = conversionCharToColor(tabPixels.get(i).get(j));
+            for (int i = 0 ; i < tabPixelsHP.size(); i++){
+                for (int j = 0; j < tabPixelsHP.get(i).size(); j++){
+                    Color couleurPixel = conversionCharToColor(tabPixelsHP.get(i).get(j));
                     
                     double xPixel = (getPosx()+gap) - 0.02 + j * taillePixel + taillePixel / 2;
                     double yPixel = (getPosy()+0.05) + 0.02 - i * taillePixel - taillePixel / 2;
@@ -128,6 +144,27 @@ public class ZoneInfo {
             gap+=0.05;
 
         }
-        
+
+        double taillePixelNiveau = 0.1 / tabPixelsHP.get(0).size();
+        for (int i = 0 ; i < tabPixelsLevel.size(); i++){
+            for (int j = 0; j < tabPixelsLevel.get(i).size(); j++){
+                Color couleurPixel = conversionCharToColor(tabPixelsLevel.get(i).get(j));
+                    
+                double xPixel = getPosx() + 0.90 + j * taillePixelNiveau + taillePixelNiveau / 2;
+                double yPixel = (getPosy()+0.085) + 0.02 - i * taillePixelNiveau - taillePixelNiveau / 2;
+                StdDraw.setPenColor(couleurPixel);
+                StdDraw.filledSquare(xPixel, yPixel, taillePixelNiveau / 2);
+            }
+        }
+
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.line(getPosx(), getPosy() + getLongueur(), getPosx()+getLargeur(), getPosy()+getLongueur());
+
+        // Indicateur du mode vies infinies
+        if (modeInfini) {
+            StdDraw.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 16));
+            StdDraw.setPenColor(StdDraw.GREEN);
+            StdDraw.text(0.90, 0.95, "INFINITE LIVES");
+        }
     }
 }

@@ -37,10 +37,13 @@ public class Player extends Entite {
         }
     }
 
-    public void perdreVie(){
-        setHp(getHp()-1);
-        if (getHp()<=0){
-            setHp(0);
+    public void perdreVie(boolean modeInfini){
+        // Si le mode vies infinies est désactivé, le joueur perd une vie
+        if (!modeInfini){
+            setHp(getHp()-1);
+            if (getHp()<=0){
+                setHp(0);
+            }
         }
     }
 

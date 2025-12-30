@@ -1,34 +1,52 @@
 package game.actors.Base;
 
+import game.actors.Monsters.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Formation {
     private List<Monster> listeMonstres;
-    private int nbrMonstres;
     private boolean directionDroite;
-    private static final double VITESSE_FORMATION = 0.001; //pour uniformiser sinon les monstres se rentrent entre eux
+    private double vitesse_formation; // pour uniformiser sinon les monstres se rentrent entre eux
+
     private List<Monster> listeMonstresHorsFormation;
     private List<Missiles> listeMissilesEnnemis;
 
-    public Formation(List<Monster> listeMonstres) {
+    private int cooldownAttaques;
+    private int cooldownTirs;
+    private int cooldownAttaquesInit;
+    private int cooldownTirsInit;
+
+    private static final double CHANCE_ATTAQUE = 0.01; // Chance qu'un monstre en formation commence une attaque
+    private static final double CHANCE_TIR_FORMATION = 0.1; // Chance qu'un monstre en formation tire un missile
+    private static final double CHANCE_TIR_HORS_FORMATION = 0.5; // Chance qu'un monstre hors formation tire un missile
+
+    public Formation(List<Monster> listeMonstres, double vitesse_formation, int cooldownAttaquesInit,
+            int cooldownTirsInit) {
         this.listeMonstres = listeMonstres;
         this.listeMonstresHorsFormation = new ArrayList<>();
-        this.nbrMonstres = listeMonstres.size();
         this.directionDroite = true;
         this.listeMissilesEnnemis = new ArrayList<>();
-        
+        this.vitesse_formation = vitesse_formation;
+        this.cooldownAttaques = 0;
+        this.cooldownTirs = 0;
+        this.cooldownTirsInit = cooldownTirsInit / 30;
+        if (cooldownAttaquesInit == -1) { // On divise par les 30 fps pour avoir le cooldown en secondes uniquement si
+                                          // différent de -1
+            this.cooldownAttaquesInit = -1;
+        } else {
+            this.cooldownAttaquesInit = cooldownAttaquesInit / 30;
+        }
 
-        for (int i = 0 ; i < nbrMonstres ; i++) {
+        for (int i = 0; i < listeMonstres.size(); i++) {
             listeMonstres.get(i).setDroite(directionDroite);
         }
 
         for (Monster m : listeMonstres) {
-
-            m.setVitesse(VITESSE_FORMATION);
+            m.setVitesse(vitesse_formation);
         }
     }
-
 
     //////////////////////// GETTERS ET SETTERS //////////////////////////
     public List<Monster> getListeMonstres() {
@@ -39,14 +57,6 @@ public class Formation {
         this.listeMonstres = listeMonstres;
     }
 
-    public int getNbrMonstres() {
-        return nbrMonstres;
-    }
-
-    public void setNbrMonstres(int nbrMonstres) {
-        this.nbrMonstres = nbrMonstres;
-    }
-
     public boolean isDirectionDroite() {
         return directionDroite;
     }
@@ -55,12 +65,12 @@ public class Formation {
         this.directionDroite = directionDroite;
     }
 
-    public boolean niveauTermine(){
-        return listeMonstres.size() == 0;
+    public boolean niveauTermine() {
+        return listeMonstres.size() == 0 && listeMonstresHorsFormation.size() == 0;
     }
 
-    public static double getVitesseFormation() {
-        return VITESSE_FORMATION;
+    public double getVitesseFormation() {
+        return vitesse_formation;
     }
 
     public List<Monster> getListeMonstresHorsFormation() {
@@ -78,16 +88,43 @@ public class Formation {
     public void setListeMissilesEnnemis(List<Missiles> listeMissilesEnnemis) {
         this.listeMissilesEnnemis = listeMissilesEnnemis;
     }
+
+    public void setVitesse_formation(double vitesse_formation) {
+        this.vitesse_formation = vitesse_formation;
+    }
+
+    public int getCooldownAttaques() {
+        return cooldownAttaques;
+    }
+
+    public void setCooldownAttaques(int cooldownAttaques) {
+        this.cooldownAttaques = cooldownAttaques;
+    }
+
+    public int getCooldownTirs() {
+        return cooldownTirs;
+    }
+
+    public void setCooldownTirs(int cooldownTirs) {
+        this.cooldownTirs = cooldownTirs;
+    }
+
+    public int getCooldownAttaquesInit() {
+        return cooldownAttaquesInit;
+    }
+
+    public int getCooldownTirsInit() {
+        return cooldownTirsInit;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////
-
-
 
     /** Dessine chaque monstre un par un */
     public void draw() {
         for (Monster m : listeMonstres) {
             m.draw();
         }
-        for (Monster m : listeMonstresHorsFormation){
+        for (Monster m : listeMonstresHorsFormation) {
             m.draw();
         }
         for (Missiles mis : listeMissilesEnnemis) {
@@ -95,94 +132,99 @@ public class Formation {
         }
     }
 
-    public void update(Player p) {
+    public void update(Player p, boolean modeInfini) {
 
-        ////////////   Supprimer les monstres tués :   ////////////
-        
-        for (int i = getListeMonstres().size()-1; i >= 0 ; i--){
-            if (getListeMonstres().get(i).isDead()){
+        //////////// Supprimer les monstres tués : ////////////
+
+        for (int i = getListeMonstres().size() - 1; i >= 0; i--) {
+            if (getListeMonstres().get(i).isDead() || getListeMonstres().get(i).isGone()) {
                 getListeMonstres().remove(i);
             }
         }
-        for (int i = getListeMonstresHorsFormation().size()-1; i >= 0 ; i--){
-            if (getListeMonstresHorsFormation().get(i).isDead()){
+        for (int i = getListeMonstresHorsFormation().size() - 1; i >= 0; i--) {
+            if (getListeMonstresHorsFormation().get(i).isDead() || getListeMonstresHorsFormation().get(i).isGone()) {
                 getListeMonstresHorsFormation().remove(i);
             }
         }
 
         // Vérifie la direction à prendre par l'ensemble de la formation.
         // Si l'un des monstres touche un mur, on change de direction.
-        for(Monster m : listeMonstres){
-        
-            // mur gauche atteint par n'importe lequel des monstres : 
+        for (Monster m : listeMonstres) {
+
+            // mur gauche atteint par n'importe lequel des monstres :
             if (m.getPosX() - m.getLength() / 2 <= 0.0) {
                 setDirectionDroite(true);
                 break;
             }
 
-            // mur droit atteint par n'importe lequel des monstres : 
+            // mur droit atteint par n'importe lequel des monstres :
             else if (m.getPosX() + m.getLength() / 2 >= 1.0) {
                 setDirectionDroite(false);
                 break;
             }
-            
+
         }
 
-        ///// Update les mouvements de chaque monstre :  //////
-        for(Monster m : listeMonstres){
-            m.update(isDirectionDroite(), p); // Done la nouvelle direction à tous les monstres 
+        ///// Update les mouvements de chaque monstre : //////
+        for (Monster m : listeMonstres) {
+            m.update(isDirectionDroite(), p, modeInfini); // Done la nouvelle direction à tous les monstres
         }
 
-        ///// Vérifie quels monstres vont commencer une attaque aléatoirement : //////
-        for (Monster m : listeMonstres){
-            if (m.isOneOfFirst(listeMonstres) && !m.isEnAttaque()) {
-                // Chance aléatoire de commencer une attaque
-                if (Math.random() < 0.001) { // 0.1% de chance par frame
-                    m.setEnAttaque(true);
-                    listeMonstresHorsFormation.add(m);
-                    listeMonstres.remove(m);
-                    break;
+        ///// Gère les attaques des monstres /////
+        setCooldownAttaques(getCooldownAttaques() + 1);
+        if (getCooldownAttaquesInit() != -1) { //
+            if (getCooldownAttaques() >= getCooldownAttaquesInit()) { //
+                ///// Vérifie quels monstres vont commencer une attaque aléatoirement : //////
+
+                for (int i = listeMonstres.size() - 1; i >= 0; i--) {
+                    if (listeMonstres.get(i).isOneOfFirst(listeMonstres) && !listeMonstres.get(i).isEnAttaque()) {
+                        // Chance aléatoire de commencer une attaque
+                        if (Math.random() < CHANCE_ATTAQUE) {
+                            Monster m = listeMonstres.get(i);
+                            m.setEnAttaque(true);
+                            listeMonstresHorsFormation.add(m);
+                            listeMonstres.remove(i);
+                        }
+                    }
                 }
+                setCooldownAttaques(0);
             }
         }
 
         ///// Update les mouvements des monstres hors formation /////
-        for(Monster m : listeMonstresHorsFormation){
-            m.update(isDirectionDroite(), p);
+        for (Monster m : listeMonstresHorsFormation) {
+            m.update(isDirectionDroite(), p, modeInfini);
         }
 
         // Tireurs en formation (première ligne uniquement)
         for (Monster m : listeMonstres) {
-            if (m.isOneOfFirst(listeMonstres) && Math.random() < 0.005) {
+            if (m.isOneOfFirst(listeMonstres) && Math.random() < CHANCE_TIR_FORMATION) {
                 m.creeMissile(listeMissilesEnnemis);
             }
         }
 
         // Tireurs hors formation
         for (Monster m : listeMonstresHorsFormation) {
-            if (Math.random() < 0.005) {
+            if (Math.random() < CHANCE_TIR_HORS_FORMATION) {
                 m.creeMissile(listeMissilesEnnemis);
             }
         }
-
-
     }
 
-    public void recommencer(){
+    public void recommencer() {
         // On remet tous les monstres hors formation dans la formation
-        for (int i = getListeMonstresHorsFormation().size()-1; i>= 0 ; i--){
+        for (int i = getListeMonstresHorsFormation().size() - 1; i >= 0; i--) {
             getListeMonstresHorsFormation().get(i).setEnAttaque(false);
             getListeMonstres().add(getListeMonstresHorsFormation().get(i));
             getListeMonstresHorsFormation().remove(getListeMonstresHorsFormation().get(i));
 
         }
         // On réinitialise les positions de chaque monstre.
-        for (Monster m : getListeMonstres()){
+        for (Monster m : getListeMonstres()) {
             m.setPosX(m.getXinit());
             m.setPosY(m.getYinit());
         }
-        
+
     }
 
-    
 }

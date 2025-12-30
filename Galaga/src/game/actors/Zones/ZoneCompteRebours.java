@@ -30,6 +30,7 @@ public class ZoneCompteRebours {
         return compte;
     }
 
+    // Affiche le compte à rebours au centre de l'écran
     public void draw() {
         if (getCompte() >= 0){
             StdDraw.setFont(FONT);
@@ -38,6 +39,7 @@ public class ZoneCompteRebours {
         }
     } 
 
+    // Met à jour le compte à rebours
     public void update(int compte){
         setCompte(compte);
     }

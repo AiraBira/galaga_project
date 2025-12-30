@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import engine.StdDraw;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import game.*;
 import game.actors.Base.*;
 import game.actors.Zones.*;
@@ -17,14 +23,14 @@ import game.actors.Monsters.*;
 public class Game {
 
     public static final int TOTAL_NIVEAUX = 2; // à changer lorqu'on rajoute des niveaux !!
-    
-    //////////                  NIVEAUX ICI                      //////////////
+
+    ////////// NIVEAUX ICI //////////////
     public static final Niveaux niveau1 = new Niveaux("../ressources/levels/level1.lvl");
     public static final Niveaux niveau2 = new Niveaux("../ressources/levels/level2.lvl");
     public List<Niveaux> listNiveaux;
 
     public List<Formation> listFormations;
-    
+
     public Player player;
     public List<Missiles> missilesDispo;
 
@@ -46,15 +52,18 @@ public class Game {
                                            // pour afficher le niveau pendant 2s.
     public int niveau_actuel;
     public boolean afficherNiveau;
+    public static boolean viesInfinies = false; // Mode vies infinies
+    private boolean toucheIappuyee = false; // Debounce pour la touche 'i'
 
     public boolean playerPauseTouche; // Nous permet de différencier la pause manuelle et la pause avec minuteur.
-    public int etat_jeu = 0; // Si 0 -> Ecran debut de partie
-                             // Si 1 -> Affichage niveau
-                             // Si 2 -> Jeu
-                             // Si 3 -> Winner ! à faire 
-                             // Si 4 -> Etat de pause
-                             // Si 5 -> Game Over ! à faire 
-                            
+    public int etat_jeu = -1; // Si -1 -> Sélection de niveau
+                              // Si 0 -> Ecran debut de partie
+                              // Si 1 -> Affichage niveau pendant 2s
+                              // Si 2 -> Jeu
+                              // Si 3 -> Winner
+                              // Si 4 -> Etat de pause après chaque mort du player
+                              // Si 5 -> Game Over
+
     /* Créé un jeu avec tous les éléments qui le composent */
     public Game() {
 
@@ -67,20 +76,23 @@ public class Game {
         listNiveaux.add(niveau1);
         listNiveaux.add(niveau2);
         niveau_actuel = 1;
+
+        // Gérer les affichages de chaque niveau.
         countdown_affichage_niveau = 67;
         afficherNiveau = false;
-        
-       
+
         missilesDispo = new ArrayList<>();
         player = new Player(0.5, 0.25, 0.05, 3, 0.01);
 
         // On initialise au debut de la partie.
-        etat_jeu = 0;
+        etat_jeu = -1; // Commence par sélection de niveau
         playerPauseTouche = false;
 
         listFormations = new ArrayList<>();
-        for (int i = 0 ; i < listNiveaux.size(); i++) {  // Chaque formation aura l'indice "niveau_actuel - 1".
-            listFormations.add(new Formation(listNiveaux.get(i).getMonstres()));
+        for (int i = 0; i < listNiveaux.size(); i++) { // Chaque formation aura l'indice "niveau_actuel - 1".
+            Niveaux n = listNiveaux.get(i);
+            listFormations
+                    .add(new Formation(n.getMonstres(), n.getVitesse(), n.getCooldownAttaques(), n.getCooldownTirs()));
         }
 
         // Ecran d'accueil //
@@ -88,7 +100,11 @@ public class Game {
 
         // Gérer le score : //
         score = 0;
-        bestScore = 0;
+        bestScore = chargementBestScore();
+        zoneScore = new ZoneScore(score, bestScore);
+
+        // Charger le meilleur score depuis le fichier
+
         zoneScore = new ZoneScore(score, bestScore);
 
         // Zones fonctionnalités //
@@ -98,8 +114,7 @@ public class Game {
         zoneInfo = new ZoneInfo(0);
     }
 
-
-    ////////////////////////////// GETTERS ET SETTERS ///////////////////////////////////
+    /////////////////// GETTERS ET SETTERS ///////////////////////
     public int getEtatJeu() {
         return etat_jeu;
     }
@@ -128,7 +143,7 @@ public class Game {
         return TOTAL_NIVEAUX;
     }
 
-    public List<Formation> getListFormation(){
+    public List<Formation> getListFormation() {
         return listFormations;
     }
 
@@ -168,20 +183,20 @@ public class Game {
         this.afficherNiveau = a;
     }
 
-    public int getCountdown_espace(){
+    public int getCountdown_espace() {
         return countdown_touche_espace;
     }
 
-    public void setCountdown_espace(int c){
+    public void setCountdown_espace(int c) {
         this.countdown_touche_espace = c;
-        
+
     }
-    
-    public boolean getEspace_a_ete_appuyee(){
+
+    public boolean getEspace_a_ete_appuyee() {
         return espace_a_ete_appuyee;
     }
 
-    public void setEspace_a_ete_appuyee(boolean b){
+    public void setEspace_a_ete_appuyee(boolean b) {
         this.espace_a_ete_appuyee = b;
     }
 
@@ -225,76 +240,63 @@ public class Game {
         return niveau1;
     }
 
-
     public static Niveaux getNiveau2() {
         return niveau2;
     }
-
 
     public List<Niveaux> getListNiveaux() {
         return listNiveaux;
     }
 
-
     public void setListNiveaux(List<Niveaux> listNiveaux) {
         this.listNiveaux = listNiveaux;
     }
-
 
     public List<Formation> getListFormations() {
         return listFormations;
     }
 
-
     public ZoneCompteRebours getZoneCompteRebours() {
         return zoneCompteRebours;
     }
-
 
     public void setZoneCompteRebours(ZoneCompteRebours zoneCompteRebours) {
         this.zoneCompteRebours = zoneCompteRebours;
     }
 
-
     public int getCompteRebours() {
         return compteRebours;
     }
-
 
     public void setCompteRebours(int compteRebours) {
         this.compteRebours = compteRebours;
     }
 
-
     public Partie getEcran() {
         return ecran;
     }
-
 
     public int getCountdown_touche_espace() {
         return countdown_touche_espace;
     }
 
-
     public void setCountdown_touche_espace(int countdown_touche_espace) {
         this.countdown_touche_espace = countdown_touche_espace;
     }
-
 
     public int getCountdown_affichage_niveau() {
         return countdown_affichage_niveau;
     }
 
-
     public int getEtat_jeu() {
         return etat_jeu;
     }
 
-    public int getCountdown_entre_vies(){
+    public int getCountdown_entre_vies() {
         return countdown_entre_vies;
     }
 
-    public void setCountdown_entre_vies(int n){
+    public void setCountdown_entre_vies(int n) {
         this.countdown_entre_vies = n;
     }
 
@@ -302,13 +304,36 @@ public class Game {
         return compteRebours2;
     }
 
-
     public void setCompteRebours2(int compteRebours2) {
         this.compteRebours2 = compteRebours2;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////:
-    
+    public static boolean isViesInfinies() {
+        return viesInfinies;
+    }
+
+    public static void setViesInfinies(boolean viesInfinies) {
+        Game.viesInfinies = viesInfinies;
+    }
+
+    public boolean isToucheIappuyee() {
+        return toucheIappuyee;
+    }
+
+    public void setToucheIappuyee(boolean toucheIappuyee) {
+        this.toucheIappuyee = toucheIappuyee;
+    }
+
+    public boolean isPlayerPauseTouche() {
+        return playerPauseTouche;
+    }
+
+    public void setPlayerPauseTouche(boolean playerPauseTouche) {
+        this.playerPauseTouche = playerPauseTouche;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////// :
+
     /*** Initialise l'espace de jeu ***/
     private void init() {
         StdDraw.setCanvasSize(700, 700);
@@ -330,8 +355,11 @@ public class Game {
         }
     }
 
-    /* Condition d'arrêt du jeu 
-     * @return true car on n'as pas encore de conditions d'arrêt */
+    /*
+     * Condition d'arrêt du jeu
+     * 
+     * @return true car on n'as pas encore de conditions d'arrêt
+     */
     private boolean isGameRunning() {
         return true;
     }
@@ -339,7 +367,11 @@ public class Game {
     /** Dessine tous les éléments du jeu **/
     public void draw() {
 
-        if (getEtatJeu() == 0) {
+        if (getEtatJeu() == -1) {
+            ecran.selection_niveau_draw();
+        }
+
+        else if (getEtatJeu() == 0) {
             ecran.debut_partie_draw();
         }
 
@@ -347,38 +379,59 @@ public class Game {
             ecran.niveau_affichage_draw();
         }
 
-        // Si on atteint l'état 3, c'est la fin de partie si le joueur à gagné! 
-        else if (getEtatJeu() == 3){
+        // Si on atteint l'état 3, c'est la fin de partie si le joueur à gagné!
+        else if (getEtatJeu() == 3) {
             ecran.win_draw();
         }
         // Si on atteint l'état 5 , c'est la fin de partie si le joueur a perdu !
-        else if (getEtatJeu() == 5){
+        else if (getEtatJeu() == 5) {
             ecran.gameOver_draw();
-        }
-        else { // L'état 2 est l'état de jeu normal et l'état 4 est l'état en pause dans lequel on affiche tout également. 
-            // On fait un fond noir.
+        } else { // L'état 2 est l'état de jeu normal et l'état 4 est l'état en pause dans lequel
+                 // on affiche tout également.
+                 // On fait un fond noir.
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.filledRectangle(0.0, 0.0, 350, 350);
 
             // On dessine les éléments du jeu.
-            zoneScore.draw();
-            zoneInfo.draw(getPlayer().getHp());
-            zoneCompteRebours.draw();
+
             getPlayer().draw();
-            getFormation(getNiveau_actuel()-1).draw();
+            getFormation(getNiveau_actuel() - 1).draw();
 
             // On dessine les missiles lancés.
             for (Missiles m : getMissilesDispo()) {
                 m.draw();
             }
+
+            zoneScore.draw();
+            zoneCompteRebours.draw();
+            zoneInfo.draw(getPlayer().getHp(), isViesInfinies());
         }
     }
-
 
     /* Met a jour les attributs de tous les éléments du jeu */
     private void update() {
 
-        if (getEtatJeu() == 0) {
+        // Si la touche 'i' est appuyée, on active ou désactive le mode vies infinies
+        if ((StdDraw.isKeyPressed(73) || StdDraw.isKeyPressed(105)) && !isToucheIappuyee()) {
+            setViesInfinies(!isViesInfinies());
+            setToucheIappuyee(true);
+        }
+        else if (!StdDraw.isKeyPressed(73) && !StdDraw.isKeyPressed(105)) {
+            setToucheIappuyee(false);
+        }
+
+        if (getEtatJeu() == -1) {
+            // Écran de sélection de niveau
+            if (StdDraw.isKeyPressed(49)) { // Touche "1"
+                replay(1);
+                setEtatJeu(0);
+            }
+            else if (StdDraw.isKeyPressed(50)) { // Touche "2"
+                replay(2);
+                setEtatJeu(0);
+            }
+        }
+        else if (getEtatJeu() == 0) {
             if (StdDraw.isKeyPressed(32)) {
                 setEtatJeu(1);
             }
@@ -390,20 +443,24 @@ public class Game {
                 countdown_affichage_niveau = 67; // On réinitialise le compteur d'affichage du niveau à 67.
             }
         }
+        //// ÉTAT DE JEU NORMAL ////
         else if (getEtatJeu() == 2) {
-            if (!getFormation(getNiveau_actuel()-1).niveauTermine()) {
-                getFormation(getNiveau_actuel()-1).update(player);
+            // Met à jour tous les éléments du jeu
+            if (!getFormation(getNiveau_actuel() - 1).niveauTermine()) {
+                getFormation(getNiveau_actuel() - 1).update(player, isViesInfinies());
             }
             player.update(getMissilesDispo());
             ecran.update(getScore(), getBestScore());
             zoneScore.update(getScore(), getBestScore());
             zoneCompteRebours.update(compteRebours);
             playerTouche();
-            
-            for (Missiles missiles : missilesDispo) {
+
+            // Met à jour les missiles du joueur
+            for (Missiles missiles : missilesDispo) { 
                 missiles.update();
             }
-            for (Missiles missiles : getFormation(getNiveau_actuel()-1).getListeMissilesEnnemis()) {
+            // Met a jour les missiles des monstres
+            for (Missiles missiles : getFormation(getNiveau_actuel() - 1).getListeMissilesEnnemis()) {
                 missiles.update();
             }
 
@@ -411,11 +468,11 @@ public class Game {
 
             // Si la formation des monstres est vide et qu'il ne reste plus de niveaux, on
             // termine la partie. Donc on passe à l'état de fin de partie qu'est le 3.
-            if (getFormation(getNiveau_actuel()-1).niveauTermine() && getNiveau_actuel() == getTotalNiveaux()) {
+            if (getFormation(getNiveau_actuel() - 1).niveauTermine() && getNiveau_actuel() == getTotalNiveaux()) {
                 setEtatJeu(3);
             }
-            else if (getFormation(getNiveau_actuel()-1).niveauTermine()){
-                setNiveau_actuel(getNiveau_actuel()+1);
+            else if (getFormation(getNiveau_actuel() - 1).niveauTermine()) {
+                setNiveau_actuel(getNiveau_actuel() + 1);
                 player.setPosX(0.5);
                 player.setPosY(0.25);
                 Partie ecran_new = new Partie(getNiveau_actuel());
@@ -423,10 +480,11 @@ public class Game {
                 setEtatJeu(1);
             }
         }
-        else if (getEtatJeu() == 4) { // Si on est dans l'état de pause tous les éléments ne s'update pas et donc reste sur place. On a juste un minuteur.
+        else if (getEtatJeu() == 4) { // Si on est dans l'état de pause tous les éléments ne s'update pas et donc
+                                        // reste sur place. On a juste un minuteur.
             zoneCompteRebours.update(compteRebours);
             if (getCompteRebours() < 0) {
-                playerPauseTouche = false; // Ce n'est pas une pause manuelle.
+                // playerPauseTouche = false; // Ce n'est pas une pause manuelle.
                 setEtatJeu(2);
             }
             else {
@@ -439,31 +497,30 @@ public class Game {
                 }
             }
         }
-        else { // SI ON EST DANS LES ETATS 3 OU 5 ON A LA MEME FONCTIONNALITE MAIS AVEC DIFFERENTS DRAW C TOUT 
+        else { // SI ON EST DANS LES ETATS 3 OU 5 ON A LA MEME FONCTIONNALITE MAIS AVEC
+                 // DIFFERENTS DRAW C TOUT
             if (getScore() >= getBestScore()) {
                 setBestScore(getScore());
-            }  
-            if (StdDraw.isKeyPressed(32) && !getEspace_a_ete_appuyee()){
+            }
+            if (StdDraw.isKeyPressed(32) && !getEspace_a_ete_appuyee()) {
                 setEspace_a_ete_appuyee(true);
                 setCountdown_espace(10);
             }
-            
             if (getEspace_a_ete_appuyee()) {
                 if (getEspace_a_ete_appuyee() && getCountdown_espace() > 0) {
-                    setCountdown_espace(getCountdown_espace()-1);
-                }
-                else { // Une fois qu'on arrive à 0 on remet l'espace a false et on replay
+                    setCountdown_espace(getCountdown_espace() - 1);
+                } else { // Une fois qu'on arrive à 0 on remet l'espace a false et on replay
                     setEspace_a_ete_appuyee(false);
-                    replay();
+                    setEtatJeu(-1);
                 }
             }
         }
     }
 
-    public void replay(){
+    public void replay(int level) {
         missilesDispo.clear();
         setAfficherNiveau(false);
-        setNiveau_actuel(1);
+        setNiveau_actuel(level); // Réinitialise au niveau que l'on veut
         setCountdown_affichage_niveau(67);
         setPlayer(new Player(0.5, 0.25, 0.05, 3, 0.01));
         // Gérer les niveaux.
@@ -471,33 +528,49 @@ public class Game {
         listNiveaux.add(new Niveaux("../ressources/levels/level1.lvl"));
         listNiveaux.add(new Niveaux("../ressources/levels/level2.lvl"));
         listFormations.clear();
-        for (int i = 0 ; i < listNiveaux.size(); i++) {  // Chaque formation aura l'indice "niveau_actuel - 1".
-            listFormations.add(new Formation(listNiveaux.get(i).getMonstres()));
+        for (int i = 0; i < listNiveaux.size(); i++) { // Chaque formation aura l'indice "niveau_actuel - 1".
+            Niveaux n = listNiveaux.get(i);
+            listFormations
+                    .add(new Formation(n.getMonstres(), n.getVitesse(), n.getCooldownAttaques(), n.getCooldownTirs()));
         }
 
         // Ecran d'accueil //
         setEcran(new Partie(getNiveau_actuel()));
 
         // Gérer le score : //
-        if (getScore() >= getBestScore()){ // si le nouveau score est meilleur que l'ancien best score alors on le met à jour. 
+        if (getScore() >= getBestScore()) { // si le nouveau score est meilleur que l'ancien best score alors on le met
+                                            // à jour.
             setBestScore(getScore());
         }
         setScore(0);
 
         setZoneScore(new ZoneScore(getScore(), getBestScore()));
-        setZoneInfo( new ZoneInfo(0));
-        setEtatJeu(0);
+        setZoneInfo(new ZoneInfo(0));
+        setEtatJeu(-1); // Retour à la sélection de niveau
     }
 
     public void monstreTouche(Monster m) {
         m.degats(1);
         if (m.isDead()) {
             setScore(getScore() + m.getValeur());
+            // Si le monstre est un Moth qui avait capturé le joueur, rendre la vie volée
+            if (m instanceof Moth) {
+                Moth moth = (Moth) m;
+                if (moth.isCapture()) {
+                    getPlayer().gagnerVie();
+                }
+            }
+            // Si nouveau meilleur score, mettre à jour et sauvegarder
+            if (getScore() > getBestScore()) {
+                setBestScore(getScore());
+                saveNewBestScore();
+                setZoneScore(new ZoneScore(getScore(), getBestScore()));
+            }
         }
     }
 
     // On verifie les collisions des missiles ennemis contre notre player.
-    public void playerTouche(){
+    public void playerTouche() {
 
         double hautPlayer = player.getPosY() + player.getLength() / 2;
         double basPlayer = player.getPosY() - player.getLength() / 2;
@@ -512,9 +585,13 @@ public class Game {
         boolean collisionYMonstre = false;
         boolean monstreTouche = false;
 
-        List<Missiles> listMis = getFormation(getNiveau_actuel()-1).getListeMissilesEnnemis(); // On range dans une variable pour pas faire multiples appels.
+        List<Missiles> listMis = getFormation(getNiveau_actuel() - 1).getListeMissilesEnnemis(); // On range dans une
+                                                                                                 // variable pour pas
+                                                                                                 // faire multiples
+                                                                                                 // appels.
 
-        for (int i = listMis.size()-1; i >= 0; i--){ // Si on fait à l'envers, quand on aura a supprimer un élément de la liste, on supprime l'actuel
+        for (int i = listMis.size() - 1; i >= 0; i--) { // Si on fait à l'envers, quand on aura a supprimer un élément
+                                                        // de la liste, on supprime l'actuel
                                                         // et les autres indices ne changeront pas !
             double hautMissile = listMis.get(i).getPosY() + listMis.get(i).getLongueur();
             double basMissile = listMis.get(i).getPosY() - listMis.get(i).getLongueur();
@@ -524,16 +601,17 @@ public class Game {
             collisionXMissile = droiteMissile >= gauchePlayer && gaucheMissile <= droitePlayer;
             collisionYMissile = hautMissile >= basPlayer && basMissile <= hautPlayer;
 
-            if (collisionXMissile && collisionYMissile){
+            if (collisionXMissile && collisionYMissile) {
                 listMis.remove(i);
                 missileTouche = true;
             }
         }
 
-        // Une collision est possible que avec les monstres hors formations qui nous attaquent ! 
-        List<Monster> listMon = getFormation(getNiveau_actuel()-1).getListeMonstresHorsFormation();
+        // Une collision est possible que avec les monstres hors formations qui nous
+        // attaquent !
+        List<Monster> listMon = getFormation(getNiveau_actuel() - 1).getListeMonstresHorsFormation();
 
-        for (int i = listMon.size()-1; i >= 0 ; i--){
+        for (int i = listMon.size() - 1; i >= 0; i--) {
             double hautMonstre = listMon.get(i).getPosY() + listMon.get(i).getLength();
             double basMonstre = listMon.get(i).getPosY() - listMon.get(i).getLength();
             double droiteMonstre = listMon.get(i).getPosX() + listMon.get(i).getLargeur();
@@ -542,82 +620,149 @@ public class Game {
             collisionXMonstre = droiteMonstre >= gauchePlayer && gaucheMonstre <= droitePlayer;
             collisionYMonstre = hautMonstre >= basPlayer && basMonstre <= hautPlayer;
 
-            if (collisionXMonstre && collisionYMonstre){
+            if (collisionXMonstre && collisionYMonstre) {
                 monstreTouche(listMon.get(i));
                 listMon.remove(i);
                 monstreTouche = true;
             }
         }
 
-        if ( missileTouche || monstreTouche ){
-                getFormation(getNiveau_actuel()-1).setListeMissilesEnnemis(listMis);
-                player.perdreVie();
-                // Si le player est mort on fini la partie 
-                if (player.isDead()){ 
-                    setEtatJeu(5);
-                }
-                // Si le player a encore des vies alors on continue la partie avec une vie en moins 
-                // On lance un compte à rebours afin de réaparaitre
-                else {
-                    // On remet le tout en formation 
-                    playerPauseTouche = true; // Pour faire un bouton pause plus tard ? ? ?
-                    // Suppression de tous les missiles : 
-                    setMissilesDispo(new ArrayList<>());
-                    getFormation(getNiveau_actuel()-1).setListeMissilesEnnemis(new ArrayList<>());
-                    // Réinitialisation de la position du player et de la formation : 
-                    getFormation(getNiveau_actuel()-1).recommencer();
-                    player.setPosX(player.getXinit());
-                    player.setPosY(player.getYinit());
-                    setCompteRebours(3); // On remet le compteur à 3 pour commencer à compter le temps avant le retour dans la partie.
-                    setCompteRebours2(15);
-                    setEtatJeu(4);
-                }
+        if (missileTouche || monstreTouche) {
+            getFormation(getNiveau_actuel() - 1).setListeMissilesEnnemis(listMis);
+            player.perdreVie(isViesInfinies());
+            // Si le player est mort on fini la partie
+            if (player.isDead()) {
+                setEtatJeu(5);
             }
+            // Si le player a encore des vies alors on continue la partie avec une vie en
+            // moins
+            // On lance un compte à rebours afin de réaparaitre
+            else {
+                // On remet le tout en formation
+                playerPauseTouche = true; // Pour faire un bouton pause plus tard ? ? ?
+                // Suppression de tous les missiles :
+                setMissilesDispo(new ArrayList<>());
+                getFormation(getNiveau_actuel() - 1).setListeMissilesEnnemis(new ArrayList<>());
+                // Réinitialisation de la position du player et de la formation :
+                getFormation(getNiveau_actuel() - 1).recommencer();
+                player.setPosX(player.getXinit());
+                player.setPosY(player.getYinit());
+                setCompteRebours(3); // On remet le compteur à 3 pour commencer à compter le temps avant le retour
+                                     // dans la partie.
+                setCompteRebours2(15);
+                setEtatJeu(4);
+            }
+        }
     }
 
+    ///////////// SUPPRIME LES MISSILES ENVOYÉS PAR LE PLAYER ////////////////
     public void suppressionMissilesPlayer(List<Missiles> listMissiles) {
         // On supprime les missiles de la liste qui dépassent le haut de l'écran.
-        // On fait à l'envers pour que lorsqu'on supprime, les indices des autres éléments ne changent pas vu qu'on supprimera 
-        // toujours le dernier élément ! 
-        for (int i = listMissiles.size()-1; i >= 0; i--){
+        // On fait à l'envers pour que lorsqu'on supprime, les indices des autres
+        // éléments ne changent pas vu qu'on supprimera
+        // toujours le dernier élément !
+        for (int i = listMissiles.size() - 1; i >= 0; i--) {
             if (listMissiles.get(i).getPosY() + listMissiles.get(i).getLongueur() > 0.91) {
                 listMissiles.remove(i);
+                break;
             }
         }
 
-        // On supprime les missiles en collision avec des monstres, qu'ils soient dans la formation ou hors formation.
-        for (int i = listMissiles.size()-1; i >= 0; i--) {
+        // On supprime les missiles en collision avec des monstres, qu'ils soient dans
+        // la formation ou hors formation.
+        for (int i = listMissiles.size() - 1; i >= 0; i--) {
             double hautMissile = listMissiles.get(i).getPosY() + (listMissiles.get(i).getLongueur());
             double gaucheMissile = listMissiles.get(i).getPosX() - (listMissiles.get(i).getLargeur());
             double droiteMissile = listMissiles.get(i).getPosX() + (listMissiles.get(i).getLargeur());
 
-            // DANS FORMATION
-            for (Monster monster : getFormation(getNiveau_actuel()-1).getListeMonstres()) {
-                double basMonstre = monster.getPosY() - (monster.getLength() / 2);
-                if (((gaucheMissile <= monster.getPosX() + (monster.getLength() / 2)) &&
-                        (droiteMissile >= monster.getPosX() - (monster.getLength() / 2))) &&
+            // MONSTRES DANS LA FORMATION
+            List<Monster> listMon = getFormation(getNiveau_actuel() - 1).getListeMonstres();
+            for (int j = listMon.size() - 1; j >= 0; j--) {
+                double basMonstre = listMon.get(j).getPosY() - (listMon.get(j).getLength() / 2);
+                if (((gaucheMissile <= listMon.get(j).getPosX() + (listMon.get(j).getLength() / 2)) &&
+                        (droiteMissile >= listMon.get(j).getPosX() - (listMon.get(j).getLength() / 2))) &&
                         (hautMissile >= basMonstre)) {
 
                     // Si un monstre est touché :
-                    monstreTouche(monster);
+                    monstreTouche(listMon.get(j));
                     listMissiles.remove(i);
                     break;
                 }
             }
 
-            // HORS FORMATION
-            for (Monster monster : getFormation(getNiveau_actuel()-1).getListeMonstresHorsFormation()) {
-                double basMonstre = monster.getPosY() - (monster.getLength() / 2);
-                if (((gaucheMissile <= monster.getPosX() + (monster.getLength() / 2)) &&
-                        (droiteMissile >= monster.getPosX() - (monster.getLength() / 2))) &&
+            // MONSTRES HORS FORMATION (CEUX QUI ATTAQUENT LE PLAYER)
+
+            List<Monster> listMonHorsFormation = getFormation(getNiveau_actuel() - 1).getListeMonstresHorsFormation();
+            for (int j = listMonHorsFormation.size() - 1; j >= 0; j--) {
+                double basMonstre = listMonHorsFormation.get(j).getPosY()
+                        - (listMonHorsFormation.get(j).getLength() / 2);
+                if (((gaucheMissile <= listMonHorsFormation.get(j).getPosX()
+                        + (listMonHorsFormation.get(j).getLength() / 2)) &&
+                        (droiteMissile >= listMonHorsFormation.get(j).getPosX()
+                                - (listMonHorsFormation.get(j).getLength() / 2)))
+                        &&
                         (hautMissile >= basMonstre)) {
 
                     // Si un monstre est touché :
-                    monstreTouche(monster);
+                    monstreTouche(listMonHorsFormation.get(j));
                     listMissiles.remove(i);
                     break;
                 }
+
             }
+        }
+    }
+
+    /////////////////////// Gérer le Highscore du fichier ////////////////////////
+    /// Ici j'ai utilisé l'IA pour m'aider à écrire ces fonctions de gestion du
+    /////////////////////// fichier de highscore.///
+    public int chargementBestScore() {
+        File f = new File("../ressources/highscore/highscore.sc");
+        if (!f.exists()) { // Si le fichier n'existe pas, on le crée et on initialise le best score à 0.
+            try {
+                if (f.getParentFile() != null) // On crée les dossiers parents si ils n'existent pas.
+                    f.getParentFile().mkdirs();
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) { // Une fois tout crée, on crée le
+                                                                                  // fichier
+                                                                                  // et on écrit 0 dedans.
+                    bw.write("0");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return 0; // On initialise le best score à 0.
+        }
+        // Dans le cas où le fichier existe, on lit son contenu pour récupérer le best
+        // score.
+        try (BufferedReader lecture = new BufferedReader(new FileReader(f))) {
+            String ligne = lecture.readLine();
+            if (ligne != null) { // On vérifie qu'il y a bien écrit quelque chose dans le fichier.
+                try {
+                    return Integer.parseInt(ligne.trim()); // On essaie de parser le contenu en entier et on le
+                                                           // retourne.
+                } catch (NumberFormatException e) { // Si jamais il y a une erreur de parsing, on initialise le best
+                                                    // score à 0.
+                    return 0;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Sert à sauveagarder le nouveau best score dans le fichier.
+    public void saveNewBestScore() {
+        File f = new File("../ressources/highscore/highscore.sc"); // Emplacement du fichier.
+        try {
+            if (f.getParentFile() != null) // On crée les dossiers parents si ils n'existent pas.
+                f.getParentFile().mkdirs();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) { // Si tout va bien, on écrit le nouveau
+                                                                              // best score dans le fichier.
+                bw.write(Integer.toString(getBestScore()));
+            }
+        } catch (IOException e) { // En cas d'erreur, on a une exception.
+            e.printStackTrace();
         }
     }
 }

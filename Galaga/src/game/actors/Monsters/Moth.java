@@ -5,14 +5,10 @@ import game.actors.Base.*;
 public class Moth extends Monster {
 
     private boolean capture;
-    public static final double TAILLE = 0.06;
-    public static final int VALEUR = 300;
-    public static final double VITESSE = 0.0005;
     public static final String SPRITE = loadSprite("../ressources/sprites/catcher.spr"); // On charge notre fichier .spr
 
-
-    public Moth(double x, double y) {
-        super(x, y, TAILLE, VALEUR, VITESSE, SPRITE);
+    public Moth(double x, double y, double taille, int valeur, double vitesse, double cooldownTir) {
+        super(x, y, taille, valeur, vitesse, SPRITE, cooldownTir);
         this.capture = false;
     }
 
@@ -25,51 +21,62 @@ public class Moth extends Monster {
     }
 
     // Vérifie si le Moth est au-dessus du joueur et déclenche la capture
-    private void verifierCapture(Player p) {
-        double gaucheMoth = getPosX() - getLargeur();
-        double droiteMoth = getPosX() + getLargeur();
-        double gauchePlayer = p.getPosX() - p.getLargeur();
-        double droitePlayer = p.getPosX() + p.getLargeur();
+    private void verifierCapture(Player p, boolean modeInfini) {
+        double gaucheMoth = getPosX() - getLength();
+        double droiteMoth = getPosX() + getLength();
+        double gauchePlayer = p.getPosX() - p.getLength();
+        double droitePlayer = p.getPosX() + p.getLength();
 
         if (droiteMoth >= gauchePlayer && gaucheMoth <= droitePlayer) {
+            p.perdreVie(modeInfini); // vie perdue lors de la capture
             setCapture(true);
-            p.perdreVie(); // vie perdue lors de la capture
         }
     }
 
-    public void mouvement_attaque(Player p) {
+    public void mouvement_attaque(Player p, boolean directionDroite, boolean modeInfini) {
         if (!isCapture()) {
-            // Descente normale
-            setPosY(getPosY() - getVitesse());
-
+            double limiteY = 0.40;
             // Si on est au-dessus du joueur, déclenche capture
-            if (getPosY() <= 0.6) {
-                verifierCapture(p);
+            if (!isCapture() && getPosY() <= limiteY) {
+                verifierCapture(p, modeInfini);
+                setPosY(limiteY);
             }
-        }
-        else {
-            // Moth reste au-dessus du joueur, descend légèrement
-            if (p.getPosX() < getPosX()) {
-                setPosX(getPosX() - getVitesse());
+            else{
+                // Descente normale
+                setPosY(getPosY() - getVitesse());
+                if (p.getPosX() < getPosX()) {
+                    setPosX(getPosX() - getVitesse() * 2);
+                } else if (p.getPosX() > getPosX()) {
+                    setPosX(getPosX() + getVitesse() * 2);
+                }
+            }  
+        } else {
+            double limiteY = 0.55;
+            // Moth reste au-dessus du joueur
+            if (getPosY() >= limiteY) {
+                if (directionDroite) {
+                    mouvementDroit();
+                } else {
+                    mouvementGauche();
+                }
             }
-            else if (p.getPosX() > getPosX()) {
-                setPosX(getPosX() + getVitesse());
+            else {
+                setPosY(getPosY() + getVitesse() *2); // remonte après capture
             }
-            setPosY(getPosY() - getVitesse() * 0.1); // descend doucement
+            
+            
         }
     }
 
-
-    public void update(boolean directionDroite, Player p) {
-
-        if (isEnAttaque()) { // Les mouvements changent que si le monstre est l'un des premiers dans la formation 
-            mouvement_attaque(p);
-        }
-        else if (directionDroite) {
+    public void update(boolean directionDroite, Player p, boolean modeInfini) {
+        if (isEnAttaque()) { // Les mouvements changent que si le monstre est l'un des premiers dans la
+            // formation
+            mouvement_attaque(p, directionDroite, modeInfini);
+        } else if (directionDroite) {
             mouvementDroit();
-        }
-        else {
+        } else {
             mouvementGauche();
         }
+        setCooldownTir(getCooldownTir() + 1); // On incrémente le cooldown de tir
     }
 }

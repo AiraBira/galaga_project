@@ -91,7 +91,8 @@ public abstract class Mouvements {
 
         if (getPosY()-(getLength()/2) <= 0.0) {
             setPosY(0+(getLength()/2));
-        } else if (getPosY()+(getLength()/2)>= 1.0) {
+        }
+        else if (getPosY()+(getLength()/2)>= 1.0) {
             setPosY(1.0-(getLength()/2));
         }
     }
@@ -101,7 +102,8 @@ public abstract class Mouvements {
 
         if (getPosY()-(getLength()/2) <= 0.0) {
             setPosY(0+(getLength()/2));
-        } else if (getPosY()+(getLength()/2) >= 1.0) {
+        }
+        else if (getPosY()+(getLength()/2) >= 1.0) {
             setPosY(1.0-(getLength()/2));
         }
     }
