@@ -6,8 +6,8 @@ import engine.StdDraw;
 
 public class Monster extends Entite {
 
-    boolean enAttaque;
-    boolean directionDroite;
+    protected boolean enAttaque;
+    protected boolean directionDroite;
     protected int valeur;
     protected static final int HP = 1;
     protected double cooldownTirInit;

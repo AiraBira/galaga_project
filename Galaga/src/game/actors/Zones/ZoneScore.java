@@ -5,8 +5,8 @@ import java.awt.Font;
 
 public class ZoneScore {
     
-    protected int score;
-    protected int bestScore;
+    private int score;
+    private int bestScore;
     private static final double LONGUEUR = 0.09;
     private static final double LARGEUR = 1;
     private static final double POSX = 0.0;

@@ -4,7 +4,7 @@ import game.actors.Base.*;
 
 public class Butterfly extends Monster {
 
-    public static final String SPRITE = loadSprite("../ressources/sprites/butterfly.spr"); // On charge notre fichier
+    private static final String SPRITE = loadSprite("../ressources/sprites/butterfly.spr"); // On charge notre fichier
                                                                                            // .spr
 
     public Butterfly(double x, double y, double taille, int valeur, double vitesse, double cooldownTir) {

@@ -2,12 +2,12 @@ package game.actors.Base;
 
 public abstract class Mouvements {
 
-    double posX;
-    double posY;
-    double length;
-    double vitesse;
-    double longueur;
-    double largeur;
+    protected double posX;
+    protected double posY;
+    protected double length;
+    protected double vitesse;
+    protected double longueur;
+    protected double largeur;
 
     public Mouvements(double posX, double posY, double vitesse, double length) {
         this.posX = posX;

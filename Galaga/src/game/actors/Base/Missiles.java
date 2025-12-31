@@ -4,8 +4,8 @@ import engine.StdDraw;
 
 public class Missiles extends Mouvements {
 
-    boolean touche;
-    boolean mouvHaut;
+    private boolean touche;
+    private boolean mouvHaut;
 
     public Missiles(double posX, double posY, double vitesse, boolean touche, boolean mouvHaut) { // L'argument touche permet de faire
                                                                                 // disparaitre le missile s'il touche

@@ -5,9 +5,9 @@ import java.awt.Font;
 
 // CLASSE GÉRANT LES DIFFÉRENTS ÉCRANS DE LA PARTIE
 public class Partie {
-    public int score;
-    public int bestScore;
-    public int niveau;
+    private int score;
+    private int bestScore;
+    private int niveau;
     private static final double LONGUEUR = 1;
     private static final double LARGEUR = 1;
     private static final double POSX = 0.0;

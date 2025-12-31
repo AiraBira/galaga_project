@@ -14,14 +14,14 @@ import engine.StdDraw;
 
 public class ZoneInfo {
     
-    protected int niveau;
+    private int niveau;
     private static final double LONGUEUR = 0.09;
     private static final double LARGEUR = 1;
     private static final double POSX = 0.0;
     private static final double POSY = 0.0;
 
-    protected List<List<Character>> tabPixelsHP = chargeTableauPixels(loadSpriteVie());
-    protected List<List<Character>> tabPixelsLevel = chargeTableauPixels(loadSpriteNiveau());
+    private List<List<Character>> tabPixelsHP = chargeTableauPixels(loadSpriteVie());
+    private List<List<Character>> tabPixelsLevel = chargeTableauPixels(loadSpriteNiveau());
 
 
     public ZoneInfo(int niveau) {

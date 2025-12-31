@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 
 
 public abstract class Entite extends Mouvements {
+    
     protected int hp; // vie totale
     protected double Xinit;
     protected double Yinit;

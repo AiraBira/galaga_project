@@ -1,6 +1,5 @@
 package game;
 
-import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import game.*;
+
 import game.actors.Base.*;
 import game.actors.Zones.*;
 import game.actors.Monsters.*;
@@ -22,41 +21,41 @@ import game.actors.Monsters.*;
  */
 public class Game {
 
-    public static final int TOTAL_NIVEAUX = 2; // à changer lorqu'on rajoute des niveaux !!
+    private static final int TOTAL_NIVEAUX = 2; // à changer lorqu'on rajoute des niveaux !!
 
     ////////// NIVEAUX ICI //////////////
-    public static final Niveaux niveau1 = new Niveaux("../ressources/levels/level1.lvl");
-    public static final Niveaux niveau2 = new Niveaux("../ressources/levels/level2.lvl");
-    public List<Niveaux> listNiveaux;
+    private static final Niveaux niveau1 = new Niveaux("../ressources/levels/level1.lvl");
+    private static final Niveaux niveau2 = new Niveaux("../ressources/levels/level2.lvl");
+    private List<Niveaux> listNiveaux;
 
-    public List<Formation> listFormations;
+    private List<Formation> listFormations;
 
-    public Player player;
-    public List<Missiles> missilesDispo;
+    private Player player;
+    private List<Missiles> missilesDispo;
 
-    public int score;
-    public int bestScore;
+    private int score;
+    private int bestScore;
 
-    public ZoneScore zoneScore;
-    public ZoneInfo zoneInfo;
-    public ZoneCompteRebours zoneCompteRebours;
-    public int compteRebours;
-    public int compteRebours2;
-    public Partie ecran;
+    private ZoneScore zoneScore;
+    private ZoneInfo zoneInfo;
+    private ZoneCompteRebours zoneCompteRebours;
+    private int compteRebours;
+    private int compteRebours2;
+    private Partie ecran;
 
-    public int countdown_entre_vies;
-    public int countdown_touche_espace;
-    public boolean espace_a_ete_appuyee;
-    public int countdown_affichage_niveau; // Comme le temps d'une boucle du jeu est 30 ms et qu'on veut 2s de pause.
+    private int countdown_entre_vies;
+    private int countdown_touche_espace;
+    private boolean espace_a_ete_appuyee;
+    private int countdown_affichage_niveau; // Comme le temps d'une boucle du jeu est 30 ms et qu'on veut 2s de pause.
                                            // 2s = 2000 ms et 2000/30 = à environ 67. Donc on doit faire 67 boucles
                                            // pour afficher le niveau pendant 2s.
-    public int niveau_actuel;
-    public boolean afficherNiveau;
-    public static boolean viesInfinies = false; // Mode vies infinies
+    private int niveau_actuel;
+    private boolean afficherNiveau;
+    private static boolean viesInfinies = false; // Mode vies infinies
     private boolean toucheIappuyee = false; // Debounce pour la touche 'i'
 
-    public boolean playerPauseTouche; // Nous permet de différencier la pause manuelle et la pause avec minuteur.
-    public int etat_jeu = -1; // Si -1 -> Sélection de niveau
+    private boolean playerPauseTouche; // Nous permet de différencier la pause manuelle et la pause avec minuteur.
+    private int etat_jeu = -1; // Si -1 -> Sélection de niveau
                               // Si 0 -> Ecran debut de partie
                               // Si 1 -> Affichage niveau pendant 2s
                               // Si 2 -> Jeu
@@ -95,16 +94,14 @@ public class Game {
                     .add(new Formation(n.getMonstres(), n.getVitesse(), n.getCooldownAttaques(), n.getCooldownTirs()));
         }
 
-        // Ecran d'accueil //
+        /*  Ecran d'accueil */
         ecran = new Partie(getNiveau_actuel());
 
-        // Gérer le score : //
+        /*  Gére le score  */
         score = 0;
         bestScore = chargementBestScore();
-        zoneScore = new ZoneScore(score, bestScore);
-
-        // Charger le meilleur score depuis le fichier
-
+        
+        /* Charge le meilleur score depuis le fichier */
         zoneScore = new ZoneScore(score, bestScore);
 
         // Zones fonctionnalités //
@@ -119,7 +116,7 @@ public class Game {
         return etat_jeu;
     }
 
-    public void setEtatJeu(int nouvelEtat) {
+    private void setEtatJeu(int nouvelEtat) {
         this.etat_jeu = nouvelEtat;
     }
 
@@ -131,11 +128,11 @@ public class Game {
         return bestScore;
     }
 
-    public void setScore(int score) {
+    private void setScore(int score) {
         this.score = score;
     }
 
-    public void setBestScore(int bestScore) {
+    private void setBestScore(int bestScore) {
         this.bestScore = bestScore;
     }
 
@@ -179,7 +176,7 @@ public class Game {
         return afficherNiveau;
     }
 
-    public void setAfficherNiveau(boolean a) {
+    private void setAfficherNiveau(boolean a) {
         this.afficherNiveau = a;
     }
 
@@ -187,7 +184,7 @@ public class Game {
         return countdown_touche_espace;
     }
 
-    public void setCountdown_espace(int c) {
+    private void setCountdown_espace(int c) {
         this.countdown_touche_espace = c;
 
     }
@@ -196,43 +193,35 @@ public class Game {
         return espace_a_ete_appuyee;
     }
 
-    public void setEspace_a_ete_appuyee(boolean b) {
+    private void setEspace_a_ete_appuyee(boolean b) {
         this.espace_a_ete_appuyee = b;
     }
 
-    public void setPlayer(Player player) {
+    private void setPlayer(Player player) {
         this.player = player;
     }
 
-    public void setMissilesDispo(List<Missiles> missilesDispo) {
+    private void setMissilesDispo(List<Missiles> missilesDispo) {
         this.missilesDispo = missilesDispo;
     }
 
-    public void setCountdown_affichage_niveau(int countdown_affichage_niveau) {
+    private void setCountdown_affichage_niveau(int countdown_affichage_niveau) {
         this.countdown_affichage_niveau = countdown_affichage_niveau;
     }
 
-    public void setNiveau_actuel(int niveau_actuel) {
+    private void setNiveau_actuel(int niveau_actuel) {
         this.niveau_actuel = niveau_actuel;
     }
 
-    public void setEtat_jeu(int etat_jeu) {
-        this.etat_jeu = etat_jeu;
-    }
-
-    public void setListFormations(List<Formation> listFormations) {
-        this.listFormations = listFormations;
-    }
-
-    public void setZoneScore(ZoneScore zoneScore) {
+    private void setZoneScore(ZoneScore zoneScore) {
         this.zoneScore = zoneScore;
     }
 
-    public void setZoneInfo(ZoneInfo zoneInfo) {
+    private void setZoneInfo(ZoneInfo zoneInfo) {
         this.zoneInfo = zoneInfo;
     }
 
-    public void setEcran(Partie ecran) {
+    private void setEcran(Partie ecran) {
         this.ecran = ecran;
     }
 
@@ -248,10 +237,6 @@ public class Game {
         return listNiveaux;
     }
 
-    public void setListNiveaux(List<Niveaux> listNiveaux) {
-        this.listNiveaux = listNiveaux;
-    }
-
     public List<Formation> getListFormations() {
         return listFormations;
     }
@@ -260,15 +245,11 @@ public class Game {
         return zoneCompteRebours;
     }
 
-    public void setZoneCompteRebours(ZoneCompteRebours zoneCompteRebours) {
-        this.zoneCompteRebours = zoneCompteRebours;
-    }
-
     public int getCompteRebours() {
         return compteRebours;
     }
 
-    public void setCompteRebours(int compteRebours) {
+    private void setCompteRebours(int compteRebours) {
         this.compteRebours = compteRebours;
     }
 
@@ -278,10 +259,6 @@ public class Game {
 
     public int getCountdown_touche_espace() {
         return countdown_touche_espace;
-    }
-
-    public void setCountdown_touche_espace(int countdown_touche_espace) {
-        this.countdown_touche_espace = countdown_touche_espace;
     }
 
     public int getCountdown_affichage_niveau() {
@@ -332,7 +309,7 @@ public class Game {
         this.playerPauseTouche = playerPauseTouche;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////// :
+    ////////////////////////////////////////////////////////////////////////////////// 
 
     /*** Initialise l'espace de jeu ***/
     private void init() {
@@ -437,26 +414,27 @@ public class Game {
             }
         }
         else if (getEtatJeu() == 1) {
-            countdown_affichage_niveau--;
-            if (countdown_affichage_niveau == 0) { // Si les 2s sont finies, on passe à l'état de jeu.
+            //countdown_affichage_niveau--;
+            setCountdown_affichage_niveau(getCountdown_affichage_niveau()-1);
+            if (getCountdown_affichage_niveau() == 0) { // Si les 2s sont finies, on passe à l'état de jeu.
                 setEtatJeu(2);
-                countdown_affichage_niveau = 67; // On réinitialise le compteur d'affichage du niveau à 67.
+                setCountdown_affichage_niveau(67); // On réinitialise le compteur d'affichage du niveau à 67.
             }
         }
         //// ÉTAT DE JEU NORMAL ////
         else if (getEtatJeu() == 2) {
             // Met à jour tous les éléments du jeu
             if (!getFormation(getNiveau_actuel() - 1).niveauTermine()) {
-                getFormation(getNiveau_actuel() - 1).update(player, isViesInfinies());
+                getFormation(getNiveau_actuel() - 1).update(getPlayer(), isViesInfinies());
             }
             player.update(getMissilesDispo());
             ecran.update(getScore(), getBestScore());
             zoneScore.update(getScore(), getBestScore());
-            zoneCompteRebours.update(compteRebours);
+            zoneCompteRebours.update(getCompteRebours());
             playerTouche();
 
             // Met à jour les missiles du joueur
-            for (Missiles missiles : missilesDispo) { 
+            for (Missiles missiles : getMissilesDispo()) { 
                 missiles.update();
             }
             // Met a jour les missiles des monstres
@@ -482,7 +460,7 @@ public class Game {
         }
         else if (getEtatJeu() == 4) { // Si on est dans l'état de pause tous les éléments ne s'update pas et donc
                                         // reste sur place. On a juste un minuteur.
-            zoneCompteRebours.update(compteRebours);
+            zoneCompteRebours.update(getCompteRebours());
             if (getCompteRebours() < 0) {
                 // playerPauseTouche = false; // Ce n'est pas une pause manuelle.
                 setEtatJeu(2);
@@ -517,6 +495,7 @@ public class Game {
         }
     }
 
+    /*** Réinitialise l'espace de jeu, c'est un replay complet ***/
     public void replay(int level) {
         missilesDispo.clear();
         setAfficherNiveau(false);
@@ -549,6 +528,7 @@ public class Game {
         setEtatJeu(-1); // Retour à la sélection de niveau
     }
 
+    /*** Si le monstre entré en paramètres est mort, change le score en y ajoutant la valeur du monstre et y provoque des dégats ***/
     public void monstreTouche(Monster m) {
         m.degats(1);
         if (m.isDead()) {
@@ -569,7 +549,7 @@ public class Game {
         }
     }
 
-    // On verifie les collisions des missiles ennemis contre notre player.
+    /*** Vérifie si le player a été touché par un missile ou un monstre ***/ 
     public void playerTouche() {
 
         double hautPlayer = player.getPosY() + player.getLength() / 2;
@@ -639,7 +619,6 @@ public class Game {
             // On lance un compte à rebours afin de réaparaitre
             else {
                 // On remet le tout en formation
-                playerPauseTouche = true; // Pour faire un bouton pause plus tard ? ? ?
                 // Suppression de tous les missiles :
                 setMissilesDispo(new ArrayList<>());
                 getFormation(getNiveau_actuel() - 1).setListeMissilesEnnemis(new ArrayList<>());
@@ -655,7 +634,7 @@ public class Game {
         }
     }
 
-    ///////////// SUPPRIME LES MISSILES ENVOYÉS PAR LE PLAYER ////////////////
+    /*** Supprime les missiles envoyés par le player lorsqu'ils touchent un monstre ou qu'ils dépassent l'écran ***/ 
     public void suppressionMissilesPlayer(List<Missiles> listMissiles) {
         // On supprime les missiles de la liste qui dépassent le haut de l'écran.
         // On fait à l'envers pour que lorsqu'on supprime, les indices des autres
@@ -714,8 +693,13 @@ public class Game {
     }
 
     /////////////////////// Gérer le Highscore du fichier ////////////////////////
-    /// Ici j'ai utilisé l'IA pour m'aider à écrire ces fonctions de gestion du
-    /////////////////////// fichier de highscore.///
+    /// Ici j'ai utilisé l'IA pour m'aider à écrire ces fonctions de gestion du highscore, 
+    // tout est écrit dans le fichier IAGenerative
+    
+    /*** Charge la valeur du best score depuis le fichier. 
+     * @return l'entier representant le meilleur score jamais eu
+     * 
+     * ***/ 
     public int chargementBestScore() {
         File f = new File("../ressources/highscore/highscore.sc");
         if (!f.exists()) { // Si le fichier n'existe pas, on le crée et on initialise le best score à 0.
@@ -751,7 +735,7 @@ public class Game {
         return 0;
     }
 
-    // Sert à sauveagarder le nouveau best score dans le fichier.
+    /***Sauveagarde le nouveau best score dans le fichier.***/
     public void saveNewBestScore() {
         File f = new File("../ressources/highscore/highscore.sc"); // Emplacement du fichier.
         try {

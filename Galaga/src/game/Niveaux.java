@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Niveaux { // Utilisation de l'IA ici
-    List<Monster> monstres = new ArrayList<>();
-    String niveau;
-    Double vitesse;
-    int cooldownAttaques;
-    int cooldownTirs;
+    private List<Monster> monstres = new ArrayList<>();
+    private String niveau;
+    private Double vitesse;
+    private int cooldownAttaques;
+    private int cooldownTirs;
 
     public Niveaux(String fichierLevel) {
         try {

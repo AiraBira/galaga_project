@@ -5,7 +5,7 @@ import game.actors.Base.*;
 public class Moth extends Monster {
 
     private boolean capture;
-    public static final String SPRITE = loadSprite("../ressources/sprites/catcher.spr"); // On charge notre fichier .spr
+    private static final String SPRITE = loadSprite("../ressources/sprites/catcher.spr"); // On charge notre fichier .spr
 
     public Moth(double x, double y, double taille, int valeur, double vitesse, double cooldownTir) {
         super(x, y, taille, valeur, vitesse, SPRITE, cooldownTir);

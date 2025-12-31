@@ -8,7 +8,7 @@ import game.actors.Base.*;
 
 public class Bee extends Monster {
 
-    public static final String SPRITE = loadSprite("../ressources/sprites/bee.spr"); // On charge notre fichier .spr
+    private static final String SPRITE = loadSprite("../ressources/sprites/bee.spr"); // On charge notre fichier .spr
                                                                                      // pour dessiner le bee
 
     public Bee(double x, double y, double taille, int valeur, double vitesse, double cooldownTir) {

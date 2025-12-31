@@ -11,8 +11,8 @@ import engine.StdDraw;
  */
 public class Player extends Entite {
 
-    protected int countdownSpacePressed; // Sert a savoir si la touche espace etait appuyée avant
-    public static final String SPRITE = loadSprite("../ressources/sprites/ship.spr"); // On charge notre fichier .spr
+    private int countdownSpacePressed; // Sert a savoir si la touche espace etait appuyée avant
+    private static final String SPRITE = loadSprite("../ressources/sprites/ship.spr"); // On charge notre fichier .spr
 
 
     /** Créé un joueur. */
