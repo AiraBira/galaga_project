@@ -3,41 +3,28 @@ LOGMO TONDI Victoria
 Groupe: Défi
 
 
-## Table des matières
-
-1. Compilation et exécutio
-2. Gameplay
-3. Architecture du projet
-4. Classes principales
-
----- Le projet de Programmation Orienté Objet est inspiré du jeu Galaga, un jeu classique d'arcade. ----
-
-//// Compilation et exécution ////
-
-** Étapes : ** 
+Compilation et exécution : 
 
 Normalement sur les PC Linux de l'université nous pouvons compiler et exécuter directement à l'aide du bouton Run Code sur VSC depuis le fichier App.
 Par contre, si ça marche pas essayer la méthode ci-dessous que nous avons utilisé sur les PC personnels  Windows : 
 
-1. **Ouvrir un terminal** dans le dossier `Galaga/src/`
+1. Ouvrir un terminal dans le dossier `Galaga/src/`
 Il faut être sûr que le répértoire courant est le src.
 Si on met la commande "ls" nous devrions voir les répértoires :   engine    game 
 
-2. **Compiler le projet** :
+2. Compiler le projet :
    Mettre la commande suivant pour compiler :
    ```bash
    javac engine/*.java game/*.java game/actors/Base/*.java game/actors/Monsters/*.java game/actors/Zones/*.java
    ```
 
-3. **Exécuter le jeu** :
+3. Exécuter le jeu :
    ```bash
    java engine.App
    ```
 
 
-////  GAMEPLAY  ////
-
-### Contrôles :
+Contrôles :
 - **Flèche gauche / Flèche droite** : déplacer le vaisseau.
 - **Espace** : tirer un missile.
 - **'1' / '2'** : (au démarrage) sélectionner le niveau.
@@ -46,7 +33,7 @@ Celle-ci est importante de la garder en tête si on veut l'utiliser car nous n'a
 du jeu sans mourir trop vite pendant le développent du jeu)
 - **Espace** (après game over/avant partie) : retourner à la sélection de niveau/ débuter partie.
 
-### Mécaniques principales :
+Mécaniques principales :
 1.**Système de vies** 3 vies pour le joueur. Si un Moth vole une vie, on peut la récupérer après l'avoir tué
 2. **Formation** : Les monstres se déplacent en formation de droite à gauche. Une fois que l'un des monstres touche l'un des murs, la direction de toute la formation change.
 3. **Attaques** : Aléatoirement, les monstres étant à l'avant de la formation, quittent la formation et attaquent. La formation a un temps de cooldown entre deux attaques de deux monstres dépendant du niveau dans lequel nous sommes. Pour le niveau 1 c'est 4000 ms, donc 4s minimum.
@@ -66,41 +53,7 @@ Les missiles restent toujours dans la partie de jeu du milieu, elle ne dépasse 
 10.**Mode vies infinies** : s'active et se désactive à l'aide de la touche I sur le clavier.
 
 
-## 🏗️ Architecture du projet
-
-```
-Galaga/
-├── src/
-│   ├── engine/
-│   │   ├── App.java              (point d'entrée)
-│   │   └── StdDraw.java          (moteur graphique)
-│   ├── game/
-│   │   ├── Game.java             (boucle de jeu, états)
-│   │   ├── Niveaux.java          (chargement des niveaux)
-│   │   ├── actors/
-│   │   │   ├── Base/
-│   │   │   │   ├── Entite.java           (classe parente des entités)
-│   │   │   │   ├── Mouvements.java       (logique de mouvement)
-│   │   │   │   ├── Player.java           (le vaisseau du joueur)
-│   │   │   │   ├── Monster.java          (classe parente des monstres)
-│   │   │   │   ├── Formation.java        (gestion de la formation et attaques)
-│   │   │   │   └── Missiles.java         (projectiles)
-│   │   │   ├── Monsters/
-│   │   │   │   ├── Bee.java              (monstre abeille)
-│   │   │   │   ├── Butterfly.java        (monstre papillon)
-│   │   │   │   └── Moth.java             (monstre papillon de nuit - capture)
-│   │   │   └── Zones/
-│   │   │       ├── Partie.java           (écrans de jeu)
-│   │   │       ├── ZoneScore.java        (affichage du score)
-│   │   │       ├── ZoneInfo.java         (affichage des vies et niveau)
-│   │   │       └── ZoneCompteRebours.java (compte à rebours entre vies)
-│   └── ressources/
-│       ├── sprites/                (fichiers .spr ASCII art)
-│       ├── levels/                 (fichiers de niveaux .lvl)
-│       └── highscore/              (sauvegarde du meilleur score)
-```
-
-## Classes principales
+Classes principales
 
 ### 1. **engine/App.java**
 **Point d'entrée** du programme.

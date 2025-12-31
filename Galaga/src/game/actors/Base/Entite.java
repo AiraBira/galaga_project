@@ -127,6 +127,7 @@ public abstract class Entite extends Mouvements {
         }
     }
 
+    // Faite grâce à l'aide de ChatGPT
     public static String loadSprite(String textLoad){ // Utilisée plus tard pour charger nos fichiers .spr
         String sprite = "";
         Scanner scan;
