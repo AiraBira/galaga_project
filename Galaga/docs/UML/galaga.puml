@@ -1,0 +1,263 @@
+@startuml GalagaClasses
+skinparam linetype ortho
+skinparam packageStyle rectangle
+left to right direction
+
+title Diagramme de classes du jeu Galaga
+
+    ' ====== Packages ======
+    package game {
+        
+        class Game {
+            - TOTAL_NIVEAUX : int
+            - niveau1 : Niveaux
+            - niveau2 : Niveaux
+            - listNiveaux : List<Niveaux>
+            - listFormations : List<Formation>
+            - niveau_actuel : int
+            - player : Player
+            - missilesDispo : List<Missiles>
+            - score : int
+            - bestScore : int
+            - zoneScore : ZoneScore
+            - zoneInfo : ZoneInfo
+            - zoneCompteRebours : ZoneCompteRebours
+            - ecran : Partie
+            - compteRebours : int
+            - compteRebours2 : int
+            - countdown_entre_vies : int
+            - countdown_touche_espace : int
+            - espace_a_ete_appuyee : boolean
+            - afficherNiveau : boolean
+            - countdown_affichage_niveau : int
+            - toucheIappuyee : boolean
+            - etat_jeu : int
+
+            + launch() : void 
+            + draw() : void
+            + update() : void
+            + replay(level:int) : void
+            + monstreTouche(m:Monster) : void
+            + playerTouche() : void
+            + suppressionMissilesPlayer(listMissiles:List<Missiles>) : void
+            + chargementBestScore() : int
+            + saveNewBestScore() : void
+        }
+
+        class Niveaux {
+            - monstres : List<Monster>
+            - niveau : String
+            - vitesse : Double
+            - cooldownAttaques : int
+            - cooldownTirs : int
+        }
+    }
+
+    package "game.actors.base" {
+        abstract class Mouvements {
+            # posX : double
+            # posY : double
+            # length : double
+            # vitesse : double
+            # longueur : double
+            # largeur : double
+
+            + mouvementDroit() : void
+            + mouvementGauche() : void
+            + mouvementHaut() : void
+            + mouvementBas() : void
+        }
+
+        abstract class Entite {
+            # hp : int 
+            # vitesse : double
+            # Xinit : double
+            # Yinit : double
+            # sprite : String
+            # tabPixels : List<List<Character>> 
+            
+            + degats(int degats) : void
+            + isDead() : boolean
+            + tire(Entite cible) : void
+            + chargeTableauPixels(String text) : List<List<Character>>
+            + conversionCharToColor(Character c) : Color 
+            + static loadSprite(String textLoad) : String 
+            + draw() : void
+        }
+
+        class Monster {
+            # enAttaque : boolean
+            # directionDroite : boolean
+            # valeur : int
+            # static final HP : int 
+            # cooldownTirInit : double 
+            # cooldownTir : double 
+
+            + creeMissile(List<Missiles> missilesMonstres) : void 
+            + update(boolean direction, Player p, boolean modeInfini) : void 
+            + isOneOfFirst(List<Monster> monstres) : boolean 
+            + isGone() : boolean 
+        }
+
+        class Missiles {
+            - touche : boolean
+            - mouvHaut : boolean
+
+            + mouvementHaut() : void
+            + mouvementBas() : void
+            + draw() : void
+            + update() : void
+        }
+
+        class Formation {
+            - listeMonstres : List<Monster>
+            - directionDroite : boolean 
+            - vitesse_formation : double 
+            - listeMonstresHorsFormation : List<Monster> 
+            - listeMissilesEnnemis : List<Missiles> 
+            - cooldownAttaques : int
+            - cooldownTirs : int
+            - cooldownAttaquesInit : int
+            - cooldownTirsInit : int
+            - static final CHANCE_ATTAQUE :  double
+            - static final CHANCE_TIR_FORMATION : double
+            - static final CHANCE_TIR_HORS_FORMATION : double 
+            
+            + niveauTermine() : boolean 
+            + draw() : void 
+            + update(Player p, boolean modeInfini) : void 
+            + recommencer() : void 
+        }
+
+        class Player {
+            - countdownSpacePressed : int 
+            - static final SPRITE : String 
+
+            + creeMissile(List<Missiles> missilesDispo) : void 
+            + perdreVie(boolean modeInfini) : void 
+            + gagnerVie() : void 
+            + update(List<Missiles> missilesDispo) : void 
+        }
+
+        class Pair<T1, T2> {
+            - key : T1
+            - value : T2
+
+            + T1 getKey()
+            + T2 getValue()
+        }
+    }
+
+    package "game.actors.monsters" {
+        class Bee {
+            - static SPRITE : String
+
+            + mouvement_attaque() : void
+            + update(boolean directionDroite, Player p, boolean modeInfini) : void
+        }
+        
+        class Butterfly {
+            - static SPRITE : String
+
+            + mouvement_attaque() :  void 
+            + update(boolean directionDroite, Player p, boolean modeInfini) :  void 
+        }
+
+        class Moth {
+            - capture : boolean
+            - static SPRITE : String 
+            
+            + isCapture() : boolean
+            + setCapture(boolean capture) :  void 
+            + mouvement_attaque(Player p, boolean directionDroite, boolean modeInfini) :  void 
+            + update(boolean directionDroite, Player p, boolean modeInfini :  void 
+        }
+    }
+
+    package "game.actors.zones" {
+        class Partie {
+            - score : int
+            - bestScore : int
+            - niveau : int
+            - static final LONGUEUR :  double 
+            - static final LARGEUR : double 
+            - static final POSX : double 
+            - static final POSY : double 
+            - static final FONT1 : Font 
+            - static final FONT2 : Font 
+
+            + update(int score, int bestScore) : void 
+            + selection_niveau_draw() : void 
+            + debut_partie_draw() : void 
+            + niveau_affichage_draw() : void 
+            + win_draw() : void 
+            + gameOver_draw() : void 
+        }
+        
+        class ZoneScore {
+            - score : int
+            - bestScore : int
+            - static final LONGUEUR : double
+            - static final LARGEUR : double
+            - static final POSX : double
+            - static final POSY : double
+            - static final FONT : Font
+
+            + draw() : void 
+            + update(int score, int bestScore) : void 
+        }
+        
+        class ZoneInfo {
+            - niveau : int
+            - static LONGUEUR : final double 
+            - static LARGEUR : final double 
+            - static POSX : final double 
+            - static POSY : final double 
+            - tabPixelsHP : List<List<Character>>
+            - tabPixelsLevel : List<List<Character>>
+
+            + chargeTableauPixels(String text) : List<List<Character>> 
+            + conversionCharToColor(Character c) : Color 
+            + static loadSpriteVie() : String 
+            + static loadSpriteNiveau() : String 
+            + draw(int hp, boolean modeInfini) : void
+        }
+
+        class ZoneCompteRebours {
+            - compte : int
+            - static POSX : final double 
+            - static POSY : final double 
+            - static FONT : final Font 
+
+            + void draw()
+            + void update(int compte)
+        }
+    }
+
+' ====== Héritages ======
+Mouvements <|-- Entite
+
+Entite <|-- Player
+Entite <|-- Monster
+Entite <|-- Missiles
+
+Bee --|> Monster
+Butterfly --|> Monster
+Moth --|> Monster
+
+' ====== Associations ======
+Game -- Player
+Game -- Niveaux
+Game -- Formation
+Game -- Missiles
+Game -- ZoneCompteRebours
+Game -- ZoneScore
+Game -- ZoneInfo
+Game -- Partie
+
+Niveaux -- Monster
+
+Formation -- Monster
+Formation -- Missiles
+
+@enduml
