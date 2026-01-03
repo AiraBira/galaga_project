@@ -44,57 +44,6 @@ public class ZoneInfo {
         this.niveau = niveau;
     }
 
-    //////// GETTERS ET SETTERS /////////
-    
-    /**
-     * Récupère le niveau actuel de la partie.
-     * @return niveau actuel
-     */
-    public int getNiveau() {
-        return niveau;
-    }
-
-    /**
-     * Définit le niveau actuel de la partie.
-     * @param niveau nouveau niveau
-     */
-    public void setNiveau(int niveau) {
-        this.niveau = niveau;
-    }
-
-    /**
-     * Récupère la longueur de la zone d'information.
-     * @return longueur
-     */
-    public static double getLongueur() {
-        return LONGUEUR;
-    }
-
-    /**
-     * Récupère la largeur de la zone d'information.
-     * @return largeur
-     */
-    public static double getLargeur() {
-        return LARGEUR;
-    }
-
-    /**
-     * Récupère la position X de la zone d'information.
-     * @return position X
-     */
-    public static double getPosx() {
-        return POSX;
-    }
-
-    /**
-     * Récupère la position Y de la zone d'information.
-     * @return position Y
-     */
-    public static double getPosy() {
-        return POSY;
-    }
-
-
     /**
      * Charge un texte représentant un sprite dans un tableau de pixels.
      * @param text le texte du sprite
@@ -266,4 +215,56 @@ public class ZoneInfo {
             StdDraw.text(0.90, 0.95, "INFINITE LIVES");
         }
     }
+
+    /* ------ GETTERS ET SETTERS ------ */
+    
+    /**
+     * Récupère le niveau actuel de la partie.
+     * @return niveau actuel
+     */
+    public int getNiveau() {
+        return niveau;
+    }
+
+    /**
+     * Définit le niveau actuel de la partie.
+     * @param niveau nouveau niveau
+     */
+    public void setNiveau(int niveau) {
+        this.niveau = niveau;
+    }
+
+    /**
+     * Récupère la longueur de la zone d'information.
+     * @return longueur
+     */
+    public static double getLongueur() {
+        return LONGUEUR;
+    }
+
+    /**
+     * Récupère la largeur de la zone d'information.
+     * @return largeur
+     */
+    public static double getLargeur() {
+        return LARGEUR;
+    }
+
+    /**
+     * Récupère la position X de la zone d'information.
+     * @return position X
+     */
+    public static double getPosx() {
+        return POSX;
+    }
+
+    /**
+     * Récupère la position Y de la zone d'information.
+     * @return position Y
+     */
+    public static double getPosy() {
+        return POSY;
+    }
+
+
 }

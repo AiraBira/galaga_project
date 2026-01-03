@@ -35,8 +35,98 @@ public class Partie {
     public Partie(int niveau) {
         this.niveau = niveau;
     }
+    
+    /** Met à jour le score et le meilleur score de la partie.
+     *
+     * @param score le score actuel du joueur
+     * @param bestScore le meilleur score enregistré
+     */
+    public void update(int score, int bestScore) {
+        setScore(score);
+        setBestScore(bestScore);
+    }
 
-    //////// GETTERS ET SETTERS /////////
+    /**
+     * Affiche l'écran de sélection du niveau.
+     */
+    public void selection_niveau_draw() {
+        StdDraw.setFont(FONT1);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
+        StdDraw.setPenColor(StdDraw.YELLOW);
+        StdDraw.text(0.5, 0.65, "SELECT LEVEL");
+
+        StdDraw.setFont(FONT2);
+        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+        StdDraw.text(0.5, 0.45, "PRESS 1 FOR LEVEL 1");
+        StdDraw.text(0.5, 0.30, "PRESS 2 FOR LEVEL 2");
+        StdDraw.text(0.5, 0.15, "PRESS 3 FOR THE BOSS");
+    }
+
+    /**
+     * Affiche l'écran de début de partie.
+     */
+    public void debut_partie_draw() {
+        StdDraw.setFont(FONT1);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
+        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+        StdDraw.text(0.5, 0.60, "PUSH SPACE BUTTON");
+    }
+
+    /**
+     * Affiche l'écran d'affichage du niveau.
+     */
+    public void niveau_affichage_draw() {
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
+        StdDraw.setFont(FONT2);
+        StdDraw.setPenColor(StdDraw.YELLOW);
+        StdDraw.text(0.5, 0.60, "LEVEL " + getNiveau());
+    }
+
+    /**
+     * Affiche l'écran de victoire.
+     */
+    public void win_draw() {
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
+        StdDraw.setPenColor(StdDraw.YELLOW);
+        StdDraw.setFont(FONT2);
+        StdDraw.text(0.5, 0.65, "YOU WON !");
+
+        StdDraw.setFont(FONT1);
+        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+        StdDraw.text(0.5, 0.45, "PRESS SPACE TO REPLAY");
+    }
+
+    /**
+     * Affiche l'écran de game over.
+     */
+    public void gameOver_draw() {
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
+
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.setFont(FONT2);
+        StdDraw.text(0.5, 0.65, "GAME OVER");
+
+        StdDraw.setFont(FONT1);
+        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+        StdDraw.text(0.5, 0.45, "PRESS SPACE TO REPLAY");
+
+        if (getScore() > getBestScore()) {
+            StdDraw.setFont(FONT2);
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.text(0.5, 0.25, "NEW RECORD :  " + getScore());
+        }
+    }
+
+    /* ------ GETTERS ET SETTERS ------ */
     
     /**
      * Récupère la longueur de l'écran de la partie.
@@ -108,95 +198,5 @@ public class Partie {
      */
     public void setBestScore(int bestScore) {
         this.bestScore = bestScore;
-    }
-    /////////////////////////////////
-    
-    /** Met à jour le score et le meilleur score de la partie.
-     *
-     * @param score le score actuel du joueur
-     * @param bestScore le meilleur score enregistré
-     */
-    public void update(int score, int bestScore) {
-        setScore(score);
-        setBestScore(bestScore);
-    }
-
-    /**
-     * Affiche l'écran de sélection du niveau.
-     */
-    public void selection_niveau_draw() {
-        StdDraw.setFont(FONT1);
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
-
-        StdDraw.setPenColor(StdDraw.YELLOW);
-        StdDraw.text(0.5, 0.65, "SELECT LEVEL");
-
-        StdDraw.setFont(FONT2);
-        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
-        StdDraw.text(0.5, 0.45, "PRESS 1 FOR LEVEL 1");
-        StdDraw.text(0.5, 0.30, "PRESS 2 FOR LEVEL 2");
-    }
-
-    /**
-     * Affiche l'écran de début de partie.
-     */
-    public void debut_partie_draw() {
-        StdDraw.setFont(FONT1);
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
-
-        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
-        StdDraw.text(0.5, 0.60, "PUSH SPACE BUTTON");
-    }
-
-    /**
-     * Affiche l'écran d'affichage du niveau.
-     */
-    public void niveau_affichage_draw() {
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
-
-        StdDraw.setFont(FONT2);
-        StdDraw.setPenColor(StdDraw.YELLOW);
-        StdDraw.text(0.5, 0.60, "LEVEL " + getNiveau());
-    }
-
-    /**
-     * Affiche l'écran de victoire.
-     */
-    public void win_draw() {
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
-
-        StdDraw.setPenColor(StdDraw.YELLOW);
-        StdDraw.setFont(FONT2);
-        StdDraw.text(0.5, 0.65, "YOU WON !");
-
-        StdDraw.setFont(FONT1);
-        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
-        StdDraw.text(0.5, 0.45, "PRESS SPACE TO REPLAY");
-    }
-
-    /**
-     * Affiche l'écran de game over.
-     */
-    public void gameOver_draw() {
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.filledRectangle(getPosx(), getPosy(), getLongueur(), getLargeur());
-
-        StdDraw.setPenColor(StdDraw.RED);
-        StdDraw.setFont(FONT2);
-        StdDraw.text(0.5, 0.65, "GAME OVER");
-
-        StdDraw.setFont(FONT1);
-        StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
-        StdDraw.text(0.5, 0.45, "PRESS SPACE TO REPLAY");
-
-        if (getScore() > getBestScore()) {
-            StdDraw.setFont(FONT2);
-            StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.text(0.5, 0.25, "NEW RECORD :  " + getScore());
-        }
     }
 }

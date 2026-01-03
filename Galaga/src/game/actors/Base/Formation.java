@@ -8,51 +8,49 @@ import java.util.List;
  * des monstres quittant la formation, des missiles ennemis.
  */
 public class Formation {
-    /** Liste des monstres actuellement dans la formation */
+    /** Liste des monstres ds la formation */
     private List<Monster> listeMonstres;
 
-    /** Indique la direction actuelle de déplacement de la formation */
+    /** Direction de déplacement de la formation */
     private boolean directionDroite;
 
-    /** Vitesse commune à tous les monstres de la formation */
+    /** Vitesse commune */
     private double vitesse_formation; // pour uniformiser sinon les monstres se rentrent entre eux
 
-    /** Liste des monstres qui ont quitté la formation pour attaquer */
+    /** Liste des monstres qui sont sortis de la formation pour attaquer */
     private List<Monster> listeMonstresHorsFormation;
 
     /** Liste des missiles tirés par les ennemis */
     private List<Missiles> listeMissilesEnnemis;
 
-    /** Compteur de cooldown pour les attaques */
+    /** Compteur de cooldown attaques */
     private int cooldownAttaques;
 
-    /** Compteur de cooldown pour les tirs */
+    /** Compteur de cooldown tirs */
     private int cooldownTirs;
 
-    /** Valeur initiale du cooldown des attaques */
+    /** Valeur init du cooldown attaques */
     private int cooldownAttaquesInit;
 
-    /** Valeur initiale du cooldown des tirs */
+    /** Valeur init du cooldown tirs */
     private int cooldownTirsInit;
 
-    /** Probabilité qu’un monstre commence une attaque depuis la formation */
-    private static final double CHANCE_ATTAQUE = 0.01; // Chance qu'un monstre en formation commence une attaque
+    /** Probabilité qu’un monstre attaque*/
+    private static final double CHANCE_ATTAQUE = 0.01;
 
-    /** Probabilité qu’un monstre en formation tire un missile */
-    private static final double CHANCE_TIR_FORMATION = 0.1; // Chance qu'un monstre en formation tire un missile
+    /** Probabilité qu’un monstre tire */
+    private static final double CHANCE_TIR_FORMATION = 0.1; 
 
-    /** Probabilité qu’un monstre hors formation tire un missile */
-    private static final double CHANCE_TIR_HORS_FORMATION = 0.5; // Chance qu'un monstre hors formation tire un missile
+    /** Probabilité qu’un monstre libre tire */
+    private static final double CHANCE_TIR_HORS_FORMATION = 0.5; 
 
     /**
      * Classe qui gère le comportement collectif des monstres ennemis.
-     * Elle s'occupe du déplacement horizontal de la formation, de la gestion des attaques et des tirs
-     * des monstres quittant la formation, des missiles ennemis.
      * 
-     * @param listeMonstres liste des monstres composant la formation
-     * @param vitesse_formation vitesse de déplacement horizontale de la formation
-     * @param cooldownAttaquesInit délai entre chaque attaque de monstres (en frames
-     * @param cooldownTirsInit délai entre chaque tir de monstres (en frames    
+     * @param listeMonstres liste des monstres 
+     * @param vitesse_formation vitesse
+     * @param cooldownAttaquesInit délai entre chaque attaque 
+     * @param cooldownTirsInit délai entre tirs   
      * */
     public Formation(List<Monster> listeMonstres, double vitesse_formation, int cooldownAttaquesInit,
             int cooldownTirsInit) {
@@ -80,147 +78,7 @@ public class Formation {
             m.setVitesse(vitesse_formation);
         }
     }
-
-    //////////////////////// GETTERS ET SETTERS //////////////////////////
     
-    /**
-     * Récupère la liste des monstres dans la formation.
-     * @return la liste des monstres dans la formation
-     */
-    public List<Monster> getListeMonstres() {
-        return listeMonstres;
-    }
-
-    /**
-     * Définit la liste des monstres dans la formation.
-     * @param listeMonstres la liste des monstres à définir
-     */
-    public void setListeMonstres(List<Monster> listeMonstres) {
-        this.listeMonstres = listeMonstres;
-    }
-
-    /**
-     * Récupère la direction actuelle de déplacement de la formation.
-     * @return true si la formation se déplace vers la droite, false sinon
-     */
-    public boolean isDirectionDroite() {
-        return directionDroite;
-    }
-
-    /**
-     * Définit la direction de déplacement de la formation.
-     * @param directionDroite true pour déplacer vers la droite, false pour gauche
-     */
-    public void setDirectionDroite(boolean directionDroite) {
-        this.directionDroite = directionDroite;
-    }
-
-    /**
-     * Vérifie si le niveau est terminé (tous les monstres éliminés).
-     * @return true si le niveau est terminé, false sinon
-     */
-    public boolean niveauTermine() {
-        return listeMonstres.size() == 0 && listeMonstresHorsFormation.size() == 0;
-    }
-
-    /**
-     * Récupère la vitesse de déplacement de la formation.
-     * @return la vitesse de la formation
-     */
-    public double getVitesseFormation() {
-        return vitesse_formation;
-    }
-
-    /**
-     * Récupère la liste des monstres hors formation.
-     * @return la liste des monstres hors formation
-     */
-    public List<Monster> getListeMonstresHorsFormation() {
-        return listeMonstresHorsFormation;
-    }
-
-    /**
-     * Récupère la liste des missiles ennemis.
-     * @return la liste des missiles ennemis
-     */
-    public List<Missiles> getListeMissilesEnnemis() {
-        return listeMissilesEnnemis;
-    }
-
-    /**
-     * Définit la liste des monstres hors formation.
-     * @param listeMonstresHorsFormation la liste des monstres hors formation à définir
-     */
-    public void setListeMonstresHorsFormation(List<Monster> listeMonstresHorsFormation) {
-        this.listeMonstresHorsFormation = listeMonstresHorsFormation;
-    }
-
-    /**
-     * Définit la liste des missiles ennemis.
-     * @param listeMissilesEnnemis la liste des missiles ennemis à définir
-     */
-    public void setListeMissilesEnnemis(List<Missiles> listeMissilesEnnemis) {
-        this.listeMissilesEnnemis = listeMissilesEnnemis;
-    }
-
-    /**
-     * Définit la vitesse de déplacement de la formation.
-     * @param vitesse_formation la vitesse de la formation à définir
-     */
-    public void setVitesse_formation(double vitesse_formation) {
-        this.vitesse_formation = vitesse_formation;
-    }
-
-    /**
-     * Récupère le compteur de cooldown des attaques.
-     * @return le compteur de cooldown des attaques
-     */
-    public int getCooldownAttaques() {
-        return cooldownAttaques;
-    }
-
-    /**
-     * Définit le compteur de cooldown des attaques.
-     * @param cooldownAttaques le compteur de cooldown des attaques à définir
-     */
-    public void setCooldownAttaques(int cooldownAttaques) {
-        this.cooldownAttaques = cooldownAttaques;
-    }
-
-    /**
-     * Récupère le compteur de cooldown des tirs.
-     * @return le compteur de cooldown des tirs
-     */
-    public int getCooldownTirs() {
-        return cooldownTirs;
-    }
-
-    /**
-     * Définit le compteur de cooldown des tirs.
-     * @param cooldownTirs le compteur de cooldown des tirs à définir
-     */
-    public void setCooldownTirs(int cooldownTirs) {
-        this.cooldownTirs = cooldownTirs;
-    }
-
-    /**
-     * Récupère la valeur initiale du cooldown des attaques.
-     * @return la valeur initiale du cooldown des attaques
-     */
-    public int getCooldownAttaquesInit() {
-        return cooldownAttaquesInit;
-    }
-
-    /**
-     * Récupère la valeur initiale du cooldown des tirs.
-     * @return la valeur initiale du cooldown des tirs
-     */
-    public int getCooldownTirsInit() {
-        return cooldownTirsInit;
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////
-
     
     /**
      * Dessine la formation et les monstres.
@@ -240,12 +98,12 @@ public class Formation {
     /**
      * Met à jour l'état de la formation et des monstres.
      *
-     * @param p joueur courant
+     * @param p joueur 
      * @param modeInfini indique si le mode infini est activé
      */
     public void update(Player p, boolean modeInfini) {
 
-        //////////// Supprimer les monstres tués : ////////////
+        // Supprimer les monstres tués : 
 
         for (int i = getListeMonstres().size() - 1; i >= 0; i--) {
             if (getListeMonstres().get(i).isDead() || getListeMonstres().get(i).isGone()) {
@@ -276,12 +134,12 @@ public class Formation {
 
         }
 
-        ///// Update les mouvements de chaque monstre : //////
+        //Update les mouvements de chaque monstre : 
         for (Monster m : listeMonstres) {
             m.update(isDirectionDroite(), p, modeInfini); // Done la nouvelle direction à tous les monstres
         }
 
-        ///// Gère les attaques des monstres /////
+        //Gère les attaques des monstres 
         setCooldownAttaques(getCooldownAttaques() + 1);
         if (getCooldownAttaquesInit() != -1) { //
             if (getCooldownAttaques() >= getCooldownAttaquesInit()) { //
@@ -302,12 +160,12 @@ public class Formation {
             }
         }
 
-        ///// Update les mouvements des monstres hors formation /////
+        //Update les mouvements des monstres hors formation
         for (Monster m : listeMonstresHorsFormation) {
             m.update(isDirectionDroite(), p, modeInfini);
         }
 
-        // Tireurs en formation (première ligne uniquement)
+        // Tireurs en formation (en première ligne uniquement)
         for (Monster m : listeMonstres) {
             if (m.isOneOfFirst(listeMonstres) && Math.random() < CHANCE_TIR_FORMATION) {
                 m.creeMissile(listeMissilesEnnemis);
@@ -333,12 +191,150 @@ public class Formation {
             getListeMonstresHorsFormation().remove(getListeMonstresHorsFormation().get(i));
 
         }
-        // On réinitialise les positions de chaque monstre.
+        // réinitialise les positions de chaque monstre.
         for (Monster m : getListeMonstres()) {
             m.setPosX(m.getXinit());
             m.setPosY(m.getYinit());
         }
 
+    }
+
+
+    /* ------ GETTERS ET SETTERS ------ */
+    /**
+     * Renvoi la liste de monstres ds la formation
+     * @return la liste des monstres
+     */
+    public List<Monster> getListeMonstres() {
+        return listeMonstres;
+    }
+
+    /**
+     * Modifie la liste des monstres dans la formation.
+     * @param listeMonstres la liste de monstres
+     */
+    public void setListeMonstres(List<Monster> listeMonstres) {
+        this.listeMonstres = listeMonstres;
+    }
+
+    /**
+     * Renvoi la direction de la formation
+     * @return true on se déplace vers la droite, false sinon
+     */
+    public boolean isDirectionDroite() {
+        return directionDroite;
+    }
+
+    /**
+     * Modifié la direction.
+     * @param directionDroite true vaut droite , false = gauche
+     */
+    public void setDirectionDroite(boolean directionDroite) {
+        this.directionDroite = directionDroite;
+    }
+
+    /**
+     * Vérifie si le niveau est terminé.
+     * @return true = terminé, false sinon
+     */
+    public boolean niveauTermine() {
+        return listeMonstres.size() == 0 && listeMonstresHorsFormation.size() == 0;
+    }
+
+    /**
+     * Renvoi la vitesse 
+     * @return la vitesse 
+     */
+    public double getVitesseFormation() {
+        return vitesse_formation;
+    }
+
+    /**
+     * Renvoi la liste des monstres hors formation
+     * @return la liste des monstres hors formation
+     */
+    public List<Monster> getListeMonstresHorsFormation() {
+        return listeMonstresHorsFormation;
+    }
+
+    /**
+     * Renvoi liste des missiles ennemis
+     * @return la liste des missiles ennemis
+     */
+    public List<Missiles> getListeMissilesEnnemis() {
+        return listeMissilesEnnemis;
+    }
+
+    /**
+     * Modifie la liste des monstres hors formation
+     * @param listeMonstresHorsFormation liste des monstres
+     */
+    public void setListeMonstresHorsFormation(List<Monster> listeMonstresHorsFormation) {
+        this.listeMonstresHorsFormation = listeMonstresHorsFormation;
+    }
+
+    /**
+     * Modifie la liste des missiles ennemi
+     * @param listeMissilesEnnemis la liste des missiles
+     */
+    public void setListeMissilesEnnemis(List<Missiles> listeMissilesEnnemis) {
+        this.listeMissilesEnnemis = listeMissilesEnnemis;
+    }
+
+    /**
+     * Modifie la vitesse de formation
+     * @param vitesse_formation la vitesse
+     */
+    public void setVitesse_formation(double vitesse_formation) {
+        this.vitesse_formation = vitesse_formation;
+    }
+
+    /**
+     * Renvoi le cooldown attaques.
+     * @return le cooldown attaques
+     */
+    public int getCooldownAttaques() {
+        return cooldownAttaques;
+    }
+
+    /**
+     * Modifie le cooldown attaques.
+     * @param cooldownAttaques le cooldown attaques
+     */
+    public void setCooldownAttaques(int cooldownAttaques) {
+        this.cooldownAttaques = cooldownAttaques;
+    }
+
+    /**
+     * Renvoi  cooldown tirs.
+     * @return le cooldown tirs
+     */
+    public int getCooldownTirs() {
+        return cooldownTirs;
+    }
+
+    /**
+     * Modifie le cooldown  tirs.
+     * @param cooldownTirs cooldown des tirs 
+     */
+    public void setCooldownTirs(int cooldownTirs) {
+        this.cooldownTirs = cooldownTirs;
+    }
+
+    /**
+     * Renvoi la valeur init du cooldown attaques.
+     * @return la valeur init du cooldown attaques
+     */
+    public int getCooldownAttaquesInit() {
+        return cooldownAttaquesInit;
+    }
+
+    /**
+     * Renvoi la valeur init du cooldown tirs.
+     * @return la valeur init du cooldown tirs
+     */
+    public int getCooldownTirsInit() {
+        return cooldownTirsInit;
     }
 
 }

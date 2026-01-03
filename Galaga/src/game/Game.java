@@ -20,11 +20,13 @@ import game.actors.zones.*;
 public class Game {
 
     /** Nombre total de niveaux disponibles dans le jeu */
-    private static final int TOTAL_NIVEAUX = 2; // à changer lorqu'on rajoute des niveaux !!
+    private static final int TOTAL_NIVEAUX = 3; // à changer lorqu'on rajoute des niveaux !!
 
     /* ------------- NIVEAUX ------------- */
     private static final Niveaux niveau1 = new Niveaux("../ressources/levels/level1.lvl");
     private static final Niveaux niveau2 = new Niveaux("../ressources/levels/level2.lvl");
+    // nouveau niveau boss ?
+    private static final Niveaux niveau3 = new Niveaux("../ressources/levels/level3.lvl");
 
     private List<Niveaux> listNiveaux;
     private List<Formation> listFormations;
@@ -99,6 +101,8 @@ public class Game {
         listNiveaux = new ArrayList<>(); // Si nouveau niveau, l'ajouter ici aussi !!
         listNiveaux.add(niveau1);
         listNiveaux.add(niveau2);
+        listNiveaux.add(niveau3
+        );
         niveau_actuel = 1;
 
         /*  Gérer le player et les missiles. */
@@ -228,6 +232,10 @@ public class Game {
                 replay(2);
                 setEtatJeu(0);
             }
+            else if (StdDraw.isKeyPressed(51)) { // Touche "3" lance le jeu depuis le niveau 3 (BOSS)
+                replay(3);
+                setEtatJeu(0);
+            }
         }
         else if (getEtatJeu() == 0) { // Si on est dans l'état de début de partie.
             if (StdDraw.isKeyPressed(32)) {
@@ -244,15 +252,16 @@ public class Game {
         }
         //// ÉTAT DE JEU NORMAL ////
         else if (getEtatJeu() == 2) {
+            playerTouche(); // Fonction qui vérifie si le player a été touché, se trouve plus bas dans ce fichier.
+            player.update(getMissilesDispo());
             // Met à jour tous les éléments du jeu
             if (!getFormation(getNiveau_actuel() - 1).niveauTermine()) {
                 getFormation(getNiveau_actuel() - 1).update(getPlayer(), isViesInfinies());
             }
-            player.update(getMissilesDispo());
             ecran.update(getScore(), getBestScore());
             zoneScore.update(getScore(), getBestScore());
             zoneCompteRebours.update(getCompteRebours());
-            playerTouche(); // Fonction qui vérifie si le player a été touché, se trouve plus bas dans ce fichier.
+            
 
             // Met à jour les missiles du joueur
             for (Missiles missiles : getMissilesDispo()) { 
@@ -273,6 +282,11 @@ public class Game {
             // Sinon si la formation est vide mais qu'il reste des niveaux, on passe au niveau suivant.
             else if (getFormation(getNiveau_actuel() - 1).niveauTermine()) { 
                 setNiveau_actuel(getNiveau_actuel() + 1);
+                // On supprime tous les missiles lancés.
+                for (int i = getMissilesDispo().size()-1; i>=0 ; i--){
+                    getMissilesDispo().remove(i);
+                }
+                // On remet le player à sa place.
                 player.setPosX(0.5);
                 player.setPosY(0.25);
                 Partie ecran_new = new Partie(getNiveau_actuel());
@@ -331,8 +345,9 @@ public class Game {
         setPlayer(new Player(0.5, 0.25, 0.05, 3, 0.01));
         // Gérer les niveaux.
         listNiveaux.clear();
-        listNiveaux.add(new Niveaux("../ressources/levels/level1.lvl"));
+        listNiveaux.add(new Niveaux("../ressources/levels/level1.lvl")); // Mettre tous les niveaux ici !! 
         listNiveaux.add(new Niveaux("../ressources/levels/level2.lvl"));
+        listNiveaux.add(new Niveaux("../ressources/levels/level3.lvl"));
         listFormations.clear();
         for (int i = 0; i < listNiveaux.size(); i++) { // Chaque formation aura l'indice "niveau_actuel - 1".
             Niveaux n = listNiveaux.get(i);

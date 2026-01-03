@@ -14,14 +14,14 @@ Si on met la commande "ls" nous devrions voir les répértoires :   engine    ga
 
 2. Compiler le projet :
    Mettre la commande suivant pour compiler :
-   ```bash
+   
    javac engine/*.java game/*.java game/actors/Base/*.java game/actors/Monsters/*.java game/actors/Zones/*.java
-   ```
+   
 
 3. Exécuter le jeu :
-   ```bash
+   
    java engine.App
-   ```
+   
 
 
 Contrôles :
@@ -31,8 +31,6 @@ Contrôles :
 - i : activation/désactivation du mode vies infinies. 
 Celle-ci est importante de la garder en tête si on veut l'utiliser car nous n'avons pas marqué cette fonctionnalité directement dans le jeu ! (ce mode nous a simplifié la vérification du fonctionnement
 du jeu sans mourir trop vite pendant le développent du jeu)
-- Espace (après game over/avant partie) : retourner à la sélection de niveau/ débuter partie.
-
 
 
 Mécaniques principales :

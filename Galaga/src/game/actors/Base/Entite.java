@@ -29,14 +29,14 @@ public abstract class Entite extends Mouvements {
     //si on veut plus tard :  protected int def; // points de défense de l'entité
     
     /**
-     * Construit une entité avec ses caractéristiques principales.
+     * Construit une entité avec ses caractéristiques.
      *
-     * @param x        position initiale sur l'axe des abscisses
-     * @param y        position initiale sur l'axe des ordonnées
+     * @param x        position y
+     * @param y        position x
      * @param length   largeur de l'entité
-     * @param vitesse  vitesse de déplacement
-     * @param hp       points de vie initiaux
-     * @param sprite   sprite de l'entité sous forme de texte
+     * @param vitesse  vitesse deplacement
+     * @param hp       vie
+     * @param sprite   sprite 
      */
     public Entite(double x, double y, double length, double vitesse, int hp, String sprite) { 
         super(x,y, vitesse, length);
@@ -48,72 +48,12 @@ public abstract class Entite extends Mouvements {
         // On crée notre tableau de pixels une seule fois ici pour ne pas le refaire plein de fois dans le draw.
         tabPixels = chargeTableauPixels(sprite);
     }
-
-    /* ------ GETTERS ET SETTERS ------ */
-
-    /**
-     * Récupère les points de vie de l'entité.
-     * @return points de vie de l'entité
-     */
-    public int getHp() {
-        return hp;
-    }
-
-    /**
-     * Modifie les points de vie de l'entité.
-     *
-     * @param hp nouveaux points de vie
-     */
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    /**
-     * Récupère la vitesse de déplacement de l'entité.
-     * @return vitesse de l'entité
-     */
-    public double getVitesse() {
-        return vitesse;
-    }
-
-    /**
-     * Récupère la position initiale X de l'entité.
-     * @return position initiale X
-     */
-    public double getXinit() {
-        return Xinit;
-    }
-
-    /**
-     * Récupère la position initiale Y de l'entité.
-     * @return position initiale Y
-     */
-    public double getYinit() {
-        return Yinit;
-    }
     
-    /**
-     * Récupère le sprite textuel de l'entité.
-     * @return sprite de l'entité
-     */
-    public String getSprite() {
-        return sprite;
-    }
 
     /**
-     * Récupère le tableau de pixels du sprite de l'entité.
-     * @return tableau de pixels du sprite
-     */
-    public List<List<Character>> getTabPixels() {
-        return tabPixels;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Inflige des dégâts à l'entité et réduit ses points de vie.
+     * Enleve de la vie
      *
-     * @param degats nombre de points de vie à retirer
+     * @param degats points de vie à enlever
      */
     public void degats(int degats){
         if (!isDead()){
@@ -125,33 +65,30 @@ public abstract class Entite extends Mouvements {
     }
 
     /**
-     * Vérifie si l'entité est morte (points de vie à 0).
-     * @return true si l'entité est morte, false sinon
+     * Vérifie si l'entité est morte
+     * @return true si l'entité est morte
      */
     public boolean isDead(){
         return getHp() == 0;
     }
 
     /**
-     * Tire sur une autre entité en lui infligeant des dégâts.
+     * Tire sur une autre entité, lui enlève de la vie
      *
-     * @param cible entité attaquée
+     * @param cible entité ciblée
      */
     public void tire(Entite cible){
         if (!cible.isDead()){
             cible.degats(1);
         }
     }
-
-    /////////////////////    GERE L'AFFICHAGE    /////////////////// 
-    
     
     /**
      * Convertit un sprite texte en tableau de pixels.
-     * Chaque ligne correspond à une ligne de caractères.
+     * Chaque ligne est une ligne de chars.
      *
-     * @param text sprite sous forme de texte
-     * @return tableau de pixels du sprite
+     * @param text sprite txt
+     * @return tableau de pixels
      */
     public List<List<Character>> chargeTableauPixels(String text){
         /// Charger le texte dans un tableau de tableaux représentant les pixels.
@@ -173,10 +110,10 @@ public abstract class Entite extends Mouvements {
     }    
 
     /**
-     * Convertit un caractère du sprite en couleur.
+     * Convertit char en couleur.
      *
-     * @param c caractère représentant une couleur
-     * @return couleur associée
+     * @param c caractère qui est une couleur
+     * @return couleur
      */
     public Color conversionCharToColor(Character c){
         if (c.equals('R')){
@@ -204,36 +141,31 @@ public abstract class Entite extends Mouvements {
      * Inspirée de la classe Niveaux pour le chargement de fichiers, dans laquelle nous avons utilisé chatgpt pour nous aider.
      * Ici il y a eu simplement de l'adaptation, pas d'IA directement.
      * 
-     * @param textLoad chemin vers le fichier sprite
-     * @return sprite sous forme de chaîne de caractères
+     * @param textLoad chemin sprite
+     * @return sprite txt
      */
     public static String loadSprite(String textLoad){ // Utilisée plus tard pour charger nos fichiers .spr
         String sprite = "";
         try {
-            // Création d'un objet File représentant le fichier de niveau à charger
+            // Création d'un objet File qui est le fichier de niveau à charger
             File fichier = new File(textLoad);
             
             // Vérifie que le fichier existe avant d'essayer de le lire
-            if (!fichier.exists()) { // Si le fichier n'existe pas, on affiche un message d'erreur
+            if (!fichier.exists()) { // Si le fichier n'existe pas, message d'erreur
                                 // et on quitte le constructeur pour éviter une exception
                 System.out.println("Fichier introuvable : " + fichier.getAbsolutePath());
                 return "";
             }
-
-            // Création d'un BufferedReader permettant de lire un fichier texte ligne par ligne
+            // Création d'un BufferedReader qui permet de lire un texte ligne par ligne
             BufferedReader reader = new BufferedReader(new FileReader(fichier));
             String ligne = "";
-
-            //Scanner scan;
-        
-            //scan = new Scanner(new File(textLoad));
             while ((ligne = reader.readLine()) != null) {
                 sprite += ligne + "\n"; //scan.nextLine() + "\n";
             }
 
-            reader.close(); // Ferme le lecteur de fichier pour libérer les ressources
+            reader.close(); // Ferme lecteur
 
-        } catch (Exception e) { // Gère les exceptions pouvant survenir lors de la lecture du fichier
+        } catch (Exception e) { // Gère les exceptions
             e.printStackTrace();
         }
         return sprite;
@@ -241,7 +173,7 @@ public abstract class Entite extends Mouvements {
 
     /**
      * Dessine l'entité à l'écran à partir de son sprite.
-     * Chaque caractère du sprite est affiché comme un pixel de la couleur que représente son caractère.
+     * Chaque caractère s'affiche comme pixel coloré.
      */
     public void draw(){
         double taillePixel = getLength() / tabPixels.get(0).size(); // On calcule la taille de pixels qu'on peut mettre 
@@ -257,4 +189,64 @@ public abstract class Entite extends Mouvements {
             }
         }
     }
+
+    /* ------ GETTERS ET SETTERS ------ */
+    
+    /**
+     * Renvoi la vie.
+     * @return points de vie de l'entité
+     */
+    public int getHp() {
+        return hp;
+    }
+
+    /**
+     * Modifie la vie.
+     *
+     * @param hp nouveaux points de vie
+     */
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    /**
+     * Renvoi la vitesse.
+     * @return vitesse de l'entité
+     */
+    public double getVitesse() {
+        return vitesse;
+    }
+
+    /**
+     * Renvoi la position x.
+     * @return position x
+     */
+    public double getXinit() {
+        return Xinit;
+    }
+
+    /**
+     * Renvoi la position y
+     * @return position y
+     */
+    public double getYinit() {
+        return Yinit;
+    }
+    
+    /**
+     * Renvoi le sprite txt
+     * @return sprite 
+     */
+    public String getSprite() {
+        return sprite;
+    }
+
+    /**
+     * Renvoi le tableau de pixesl
+     * @return tab de pixels
+     */
+    public List<List<Character>> getTabPixels() {
+        return tabPixels;
+    }
+
 }

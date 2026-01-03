@@ -27,7 +27,26 @@ public class ZoneCompteRebours {
         this.compte = compte;
     }
 
-    /////// GETTERS ET SETTERS /////////
+    /**
+     * Affiche le compte à rebours à l'écran.
+     */
+    public void draw() {
+        if (getCompte() >= 0){
+            StdDraw.setFont(FONT);
+            StdDraw.setPenColor(StdDraw.GREEN);
+            StdDraw.text(0.5,0.5, ""+compte);
+        }
+    } 
+
+    /**
+     * Met à jour la valeur du compte à rebours.
+     * @param compte  nouvelle valeur du compte à rebours
+     */
+    public void update(int compte){
+        setCompte(compte);
+    }
+
+    /* ------ GETTERS ET SETTERS ------ */
     
     /**
      * Récupère la position X de la zone de compte à rebours.
@@ -61,22 +80,4 @@ public class ZoneCompteRebours {
         return compte;
     }
 
-    /**
-     * Affiche le compte à rebours à l'écran.
-     */
-    public void draw() {
-        if (getCompte() >= 0){
-            StdDraw.setFont(FONT);
-            StdDraw.setPenColor(StdDraw.GREEN);
-            StdDraw.text(0.5,0.5, ""+compte);
-        }
-    } 
-
-    /**
-     * Met à jour la valeur du compte à rebours.
-     * @param compte  nouvelle valeur du compte à rebours
-     */
-    public void update(int compte){
-        setCompte(compte);
-    }
 }

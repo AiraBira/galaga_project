@@ -30,7 +30,7 @@ public class Pair<T1, T2> {
      *
      * @return le premier élément de la paire
      */
-    public T1 getKey() { // Renvoi le premier élément d'une paire.
+    public T1 getKey() { 
         return key;
     }
 
@@ -39,7 +39,7 @@ public class Pair<T1, T2> {
      *
      * @return le deuxième élément de la paire
      */
-    public T2 getValue() { // Renvoi le deuxième élément d'une paire.
+    public T2 getValue() { 
         return value;
     }
 }

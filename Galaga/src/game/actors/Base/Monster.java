@@ -9,33 +9,33 @@ import java.util.List;
  */
 public class Monster extends Entite {
 
-    /** Indique si le monstre est actuellement en attaque hors de la formation */
+    /** Indique si le monstre est hors de la formation */
     protected boolean enAttaque; 
 
     /** Indique la direction actuelle de déplacement du monstre */
     protected boolean directionDroite;
 
-    /** Valeur en points du monstre lorsqu'il est détruit */
+    /** Valeur lorsqu'il est détruit */
     protected int valeur;
 
-    /** Points de vie du monstre */
+    /**  Vie du monstre */
     protected static final int HP = 1;
 
     /** Délai initialisé entre chaque tir du monstre */
-    protected double cooldownTirInit; // Délai initial entre chaque tir
+    protected double cooldownTirInit; 
     /** Délai actuel entre chaque tir du monstre */
-    protected double cooldownTir; // Le temps entre chaque tir est donné par la classe Formation
+    protected double cooldownTir; 
 
     /**
-     * Construit un monstre avec ses caractéristiques principales.
+     * Construit un monstre avec ses caractéristiques principales:
      *
-     * @param x        position initiale sur l'axe des abscisses
-     * @param y        position initiale sur l'axe des ordonnées
-     * @param length   largeur du monstre
+     * @param x        position x
+     * @param y        position y
+     * @param length   taille du monstre
      * @param valeur   valeur en points du monstre
-     * @param vitesse  vitesse de déplacement du monstre
-     * @param sprite   sprite du monstre sous forme de texte
-     * @param cooldownTirInit délai initial entre chaque tir du monstre
+     * @param vitesse  vitesse du monstre
+     * @param sprite   sprite txt 
+     * @param cooldownTirInit délai initial entre chaque tir
      */
     public Monster(double x, double y, double length, int valeur, double vitesse, String sprite,
             double cooldownTirInit) {
@@ -43,7 +43,7 @@ public class Monster extends Entite {
         super(x, y, length, vitesse, HP, sprite);
         this.valeur = valeur;
         this.cooldownTirInit = cooldownTirInit;
-        this.cooldownTir = Math.random() * cooldownTirInit; // Décalage aléatoire pour éviter la synchronisation
+        this.cooldownTir = Math.random() * cooldownTirInit; // J'ai multiplié par valeur aléatoire pour éviter la synchronisation !!
     }
 
     /**
@@ -62,15 +62,13 @@ public class Monster extends Entite {
 
     /**
      * Met à jour l'état du monstre.
-     * Cette méthode est vide dans la classe de base et doit être implémentée
-     * dans les sous-classes spécifiques de monstres.
+     * Cette méthode doit être implémentée dans les classes filles  monstres !! 
      *
-     * @param direction      direction actuelle de la formation (true pour droite, false pour gauche)
-     * @param p              joueur actuel
-     * @param modeInfini     indique si le mode infini est activé
+     * @param direction      direction actuelle de la formation
+     * @param p              joueur
+     * @param modeInfini     si le mode infini est activé
      */
-    public void update(boolean direction, Player p, boolean modeInfini) {
-    }
+    public void update(boolean direction, Player p, boolean modeInfini) {}
 
     /**
      * Vérifie si le monstre est l'un des premiers dans la formations.

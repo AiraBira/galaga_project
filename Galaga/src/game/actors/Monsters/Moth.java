@@ -29,25 +29,6 @@ public class Moth extends Monster {
         this.capture = false;
     }
 
-    /* ------ GETTERS ET SETTERS ------ */
-    /**
-     * Vérifie si le Moth a capturé le joueur.
-     * @return true si le Moth a capturé le joueur, false sinon
-     */
-    public boolean isCapture() {
-        return capture;
-    }
-
-    /**
-     * Définit l'état de capture du Moth.
-     * @param capture true si le Moth a capturé le joueur, false sinon
-     */
-    public void setCapture(boolean capture) {
-        this.capture = capture;
-    }
-
-
-    
     /**
      * Vérifie si le Moth capture le joueur.
      * @param p le joueur
@@ -124,4 +105,24 @@ public class Moth extends Monster {
         }
         setCooldownTir(getCooldownTir() + 1); // On incrémente le cooldown de tir
     }
+
+    /* ------ GETTERS ET SETTERS ------ */
+    /**
+     * Vérifie si le Moth a capturé le joueur.
+     * @return true si le Moth a capturé le joueur, false sinon
+     */
+    public boolean isCapture() {
+        return capture;
+    }
+
+    /**
+     * Définit l'état de capture du Moth.
+     * @param capture true si le Moth a capturé le joueur, false sinon
+     */
+    public void setCapture(boolean capture) {
+        this.capture = capture;
+    }
+
+
+    
 }

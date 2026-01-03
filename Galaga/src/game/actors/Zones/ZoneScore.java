@@ -32,8 +32,32 @@ public class ZoneScore {
         this.score = score;
         this.bestScore = bestScore;
     }
+    
+    /**
+     * Affiche le score actuel et le meilleur score à l'écran.
+     */
+    public void draw() {
+        StdDraw.setFont(FONT);
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.text(0.5,0.97, "HIGH SCORE");
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(0.1,0.94, ""+getScore());
+        StdDraw.text(0.5,0.94, ""+getBestScore());
 
-    //////// GETTERS ET SETTERS /////////
+        StdDraw.line(getPosx(), getPosy() - getLongueur(), getPosx() + getLargeur(), getPosy() - getLongueur());
+    } 
+
+    /**
+     * Met à jour les scores affichés.
+     * @param score le score actuel
+     * @param bestScore le meilleur score enregistré
+     */
+    public void update(int score, int bestScore){
+        setScore(score);
+        setBestScore(bestScore);
+    }
+
+    /* ------ GETTERS ET SETTERS ------ */
     
     /**
      * Récupère le score actuel du joueur.
@@ -97,31 +121,6 @@ public class ZoneScore {
      */
     public static double getPosy() {
         return POSY;
-    }
-    //////////////////////////////////////:
-    
-    /**
-     * Affiche le score actuel et le meilleur score à l'écran.
-     */
-    public void draw() {
-        StdDraw.setFont(FONT);
-        StdDraw.setPenColor(StdDraw.RED);
-        StdDraw.text(0.5,0.97, "HIGH SCORE");
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.text(0.1,0.94, ""+getScore());
-        StdDraw.text(0.5,0.94, ""+getBestScore());
-
-        StdDraw.line(getPosx(), getPosy() - getLongueur(), getPosx() + getLargeur(), getPosy() - getLongueur());
-    } 
-
-    /**
-     * Met à jour les scores affichés.
-     * @param score le score actuel
-     * @param bestScore le meilleur score enregistré
-     */
-    public void update(int score, int bestScore){
-        setScore(score);
-        setBestScore(bestScore);
     }
 
 }
