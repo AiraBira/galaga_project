@@ -1,28 +1,38 @@
 IA utilisée : ChatGPT.
 
-La majorité de son utilisation a été pour le débuggage. Notamment en lui donnant notre code écrit et en lui demandant 
+- La majorité de son utilisation a été pour le débuggage. Notamment en lui donnant notre code écrit et en lui demandant 
 ce qui n'allait pas, l'IA nous explique alors les erreurs et nous corrigeons. 
 Nous avons fait attention a ce que tout soit logique et qu'elle suive nos idées plutôt que le contraire. 
 Nous avons également toujours essayé de choisir parmis les méthodes qu'elle nous proposait, celles que nous comprenions 
 même si parfois elles étaient soi disant "moins optimales".
 
-Elle a été utilisée surtout dans la partie gérant l'affichage des sprites.
+- Lorsque nous voulions enlever des éléments d'une liste à l'aide d'une boucle, l'IA nous a très vite corrigé un souci 
+qu'est celui des indices lorsqu'on supprime un élément de la boucle pendant qu'on itère. 
+On itère la boucle à l'envers afin d'éviter de bouger les indices de tous les éléments de la liste et de sortir de la boucle 
+dès que l'on en supprime un élément.
+On a ainsi fini par faire comme ça dans toutes les boucles dans lesquels on supprime des élémens de tout le projet.
+
+- Elle a été utilisée surtout dans la partie gérant l'affichage des sprites.
 Nous ne savions pas trop comment nous y prendre à part le fait de changer chaque lettre par sa couleur correspondante.
 Nous avions donc commencé par créer une méthode chargeTableauPixels(String text) qui transformerait un texte en tableau 2D
 de caractères mais nous ne savions pas comment charger ce texte. Tout comme le fait de charger le highscore ou les differents niveaux.
 
-L'IA nous a montré comment faire pour charger un fichier à l'aide de la la bibliothèque standard Java scanner, que nous avons réutilisé la
-pour tous les chargements nécessaires dans les autres classes aussi.
-Ce qui nous a permis de créer la méthode loadSprite(String textLoad) en permettant de lire une chaîne de caractères correspondant à l'emplacement
-d'un fichier, et en prendre le contenue en chaîne de caractères. 
+L'IA nous a montré comment faire pour charger un fichier à l'aide de BufferRead permettant de lire le contenu d'un fichier ligne par ligne,
+nous devions ensuite utiliser les données lues là où c'était nécessaire.
+Nous avons donc réutilisé la même méthode pour tous les chargements nécessaires dans les autres classes aussi, 
+en adaptant évidemment aux différences entre les méthodes. 
 
-C'est cette méthode qui nous a permis d'utiliser notre chargeTableauPixels(String text), transformant la chaîne en tableau de caractères.
-Chaque ligne et colonne correspondent donc aux lignes et colonnes visibles dans le fichier qui nosu est donné.
-
-De plus, la méthode draw() de la même classe s’appuie sur ce tableau 2D pour afficher le sprite à l’écran.
+- De plus, la méthode draw() de la même classe s’appuie sur un tableau 2D pour afficher le sprite à l’écran.
 Elle parcourt chaque caractère du tableau en le convertissant en couleur, puis dessine un carré de taille adaptée à l’aide de la bibliothèque StdDraw.
 La taille d'un seul pixel est la taille de l'entité / nombre de pixels total d'une ligne.
-La position de chaque carré est calculée relativement au centre de l’entité, ce calcul nous a été donné par l'IA également.
+La position de chaque carré est calculée relativement au centre de l’entité, ce calcul nous a été donné par l'IA.
 La logique du calcul de l'emplacement est que nous nous posons au milieu de l'entité, puis sur son coté gauche, puis on y ajoute le nombre de pixels
 déja posés, d'y ajouter également la moitié d'un seul pixel pour se mettre au milieu de son emplacement et enfin y dessiner notre pixel. 
-L’IA nous a aidés à comprendre la logique de calcul des positions des pixels (la gestion du repère centré).
+L’IA nous a aidés à comprendre la logique de calcul des positions des pixels (la gestion du repère centré) et on a pu la reproduire pour 
+tous les draw de sprites.
+
+
+IA utilisée : Copilot de VSC 
+L'IA de VSC nous a simplifé la tâche lorsque nous avions dû commencer à bien commenter notre code en Javadoc.
+Lorsque nous commençons à écrire une phrase pour expliquer une méthode, il la devinait par la suite ce qui allait plus vite.
+C'est la méthode que nous avons utilisé pour commenter tout notre code. 
